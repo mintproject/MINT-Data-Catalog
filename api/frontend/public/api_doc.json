@@ -1,0 +1,1393 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "API Documentation for MINT Data Catalog",
+    "version": "1.0.0",
+    "title": "MINT Data Catalog",
+    "contact": {
+      "email": "danf@usc.edu"
+    }
+  },
+  "host": "api.mint-data-catalog.org",
+  "tags": [
+    {
+      "name": "Datasets"
+    },
+    {
+      "name": "Standard Variables"
+    },
+    {
+      "name": "Variables",
+      "externalDocs": {
+        "description": "More information can be found here",
+        "url": "https://github.com/mintproject/MINT-DataCatalog-Public/blob/master/docs/resources.md"
+      }
+    },
+    {
+      "name": "Resources",
+      "externalDocs": {
+        "description": "More information can be found here",
+        "url": "https://github.com/mintproject/MINT-DataCatalog-Public/blob/master/docs/resources.md"
+      }
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/datasets/register_datasets": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Create dataset record(s)",
+        "description": "",
+        "operationId": "registerDatasets",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dataset definitions",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "datasets": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Dataset"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/dataset_standard_variables": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "List all standard_variables for this dataset",
+        "description": "",
+        "operationId": "datasetStandardVariables",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "record_id of the dataset"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "dataset_name": {
+                      "type": "string"
+                    },
+                    "standard_variables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "standard_variable_id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "standard_variable_name": {
+                            "type": "string"
+                          },
+                          "standard_variable_uri": {
+                            "type": "string",
+                            "format": "uri"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/dataset_variables": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "List all variables for this dataset",
+        "description": "",
+        "operationId": "datasetVariables",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "record_id of the dataset"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "dataset_name": {
+                      "type": "string"
+                    },
+                    "variables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "variable_id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "variable_name": {
+                            "type": "string"
+                          },
+                          "variable_metadata": {
+                            "type": "object"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/dataset_resources": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "List all resources for this dataset",
+        "description": "",
+        "operationId": "datasetResources",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "record_id of the dataset"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "dataset_name": {
+                      "type": "string"
+                    },
+                    "resources": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "resource_id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "resource_name": {
+                            "type": "string"
+                          },
+                          "resource_data_url": {
+                            "type": "string",
+                            "format": "uri"
+                          },
+                          "resource_created_at": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/get_dataset_info": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Detailed information about the dataset",
+        "description": "",
+        "operationId": "getDatasetInfo",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "record_id of the dataset"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/search": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Full-text search of datasets",
+        "description": "",
+        "operationId": "datasetsSearch",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "search_query": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "dataset_name": {
+                      "type": "string"
+                    },
+                    "dataset_description": {
+                      "type": "string"
+                    },
+                    "dataset_metadata": {
+                      "type": "object"
+                    },
+                    "variables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "variable_id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "variable_name": {
+                            "type": "string"
+                          },
+                          "variable_metadata": {
+                            "type": "object"
+                          },
+                          "standard_variables": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "standard_variable_id": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "standard_variable_name": {
+                                  "type": "string"
+                                },
+                                "standard_variable_uri": {
+                                  "type": "string",
+                                  "format": "uri"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/find_datasets": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Search datasets by name, id, or standard variables",
+        "description": "",
+        "operationId": "findDatasets",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_names__in": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "dataset_ids__in": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "standard_variable_ids__in": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "format": "uuid"
+                  }
+                },
+                "standard_variable_names__in": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "dataset_name": {
+                      "type": "string"
+                    },
+                    "dataset_description": {
+                      "type": "string"
+                    },
+                    "dataset_metadata": {
+                      "type": "object"
+                    },
+                    "variables": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "variable_id": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "variable_name": {
+                            "type": "string"
+                          },
+                          "variable_metadata": {
+                            "type": "object"
+                          },
+                          "standard_variables": {
+                            "type": "array",
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "standard_variable_id": {
+                                  "type": "string",
+                                  "format": "uuid"
+                                },
+                                "standard_variable_name": {
+                                  "type": "string"
+                                },
+                                "standard_variable_uri": {
+                                  "type": "string",
+                                  "format": "uri"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/register_variables": {
+      "post": {
+        "tags": [
+          "Variables"
+        ],
+        "summary": "Create variable record(s)",
+        "description": "",
+        "operationId": "registerVariables",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Variable definitions",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "variables": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Variable"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/register_resources": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Create resource record(s)",
+        "description": "",
+        "operationId": "registerResources",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Resource definitions",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "resources": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Resource"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/datasets/update_dataset": {
+      "post": {
+        "tags": [
+          "Datasets"
+        ],
+        "summary": "Update dataset",
+        "description": "",
+        "operationId": "updateDataset",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dataset definition",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["id"],
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "New display name/title of the dataset"
+                },
+                "description": {
+                  "type": "string",
+                  "description": "new human-readable description of the dataset"
+                },
+                "metadata": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/resources/get_resource_info": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Detailed information about the resource",
+        "description": "",
+        "operationId": "getResourceInfo",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "record_id of the resource"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "resource_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "record_id of the dataset that this resource belongs to"
+                    },
+                    "resource_type": {
+                      "type": "string"
+                    },
+                    "data_url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    },
+                    "created_at": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/resources/update_resource": {
+      "post": {
+        "tags": [
+          "Resources"
+        ],
+        "summary": "Update resource",
+        "description": "",
+        "operationId": "updateResource",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Resource definition",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["resource_id"],
+              "type": "object",
+              "required": [
+                "resource_id"
+              ],
+              "properties": {
+                "resource_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "New display name/title of the resource"
+                },
+                "resource_type": {
+                  "type": "string",
+                  "enum": [
+                    "GeoJSON",
+                    "NetCDF",
+                    "CSV",
+                    "GeoTIFF",
+                    "JSON",
+                    "SHP",
+                    "TXT",
+                    "<Write-in your own>"
+                  ]
+                },
+                "data_url": {
+                  "type": "string",
+                  "description": "New direct download url for this resource"
+                },
+                "metadata": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/variables/get_variable_info": {
+      "post": {
+        "tags": [
+          "Variables"
+        ],
+        "summary": "Detailed information about the variable",
+        "description": "",
+        "operationId": "getVariableInfo",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "record_id of the variable"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "variable_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "dataset_id": {
+                      "type": "string",
+                      "format": "uuid",
+                      "description": "record_id of the dataset that this variable belongs to"
+                    },
+                    "metadata": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/variables/update_variable": {
+      "post": {
+        "tags": [
+          "Variables"
+        ],
+        "summary": "Update variable",
+        "description": "",
+        "operationId": "updateVariable",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Dataset definition",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["variable_id"],
+              "properties": {
+                "variable_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "New display name/title/label of the variable"
+                },
+                "metadata": {
+                  "type": "object"
+                }
+              }
+
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/knowledge_graph/register_standard_variables": {
+      "post": {
+        "tags": [
+          "Standard Variables"
+        ],
+        "summary": "Create standard_variable record(s)",
+        "description": "",
+        "operationId": "registerStandardVariables",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Standard Variable definitions",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "standard_variables": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/StandardVariable"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/standard_variables/update_standard_variable": {
+      "post": {
+        "tags": [
+          "StandardVariables"
+        ],
+        "summary": "Update standard variable",
+        "description": "",
+        "operationId": "updateStandardVariable",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Standard variable definition",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "required": ["standard_variable_id"],
+              "properties": {
+                "standard_variable_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "Unique identifier"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "New display name/title/label of the standard variable"
+                },
+                "ontology": {
+                  "type": "string",
+                  "description": "New name of the ontology under which this standard variable is defined"
+                },
+                "uri": {
+                  "type": "string",
+                  "description": "New public URI that defines this standard variable"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    },
+    "/standard_variables/get_standard_variable_info": {
+      "post": {
+        "tags": [
+          "Standard Variables"
+        ],
+        "summary": "Detailed information about the standard variable",
+        "description": "",
+        "operationId": "getStandardVariableInfo",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset_id": {
+                  "type": "string",
+                  "format": "uuid",
+                  "description": "record_id of the standard variable"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dataset": {
+                  "type": "object",
+                  "properties": {
+                    "standard_variable_id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "ontology": {
+                      "type": "string"
+                    },
+                    "uri": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (check error message(s) to correct it)"
+          },
+          "500": {
+            "description": "Internal error - please contact Dan Feldman danf@usc.edu"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Dataset": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "provenance_id",
+        "name",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier"
+        },
+        "provenance_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "record_id of the entity that created this dataset"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name/title of the dataset"
+        },
+        "description": {
+          "type": "string",
+          "description": "Human-readable description of the dataset"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "Resource": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "dataset_id",
+        "provenance_id",
+        "name",
+        "resource_type",
+        "data_url"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier"
+        },
+        "dataset_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "record_id of the dataset that this resource belongs to"
+        },
+        "provenance_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "record_id of the entitity that created this resource"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name/title of the resource"
+        },
+        "resource_type": {
+          "type": "string",
+          "enum": [
+            "GeoJSON",
+            "NetCDF",
+            "CSV",
+            "GeoTIFF",
+            "JSON",
+            "SHP",
+            "TXT",
+            "<Write-in your own>"
+          ]
+        },
+        "data_url": {
+          "type": "string",
+          "description": "direct download url for this resource"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "Variable": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "dataset_id",
+        "name"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier"
+        },
+        "dataset_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "record_id of the dataset that this variable belongs to"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name/title/label of the variable"
+        },
+        "metadata": {
+          "type": "object"
+        }
+      }
+    },
+    "StandardVariable": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "name",
+        "ontology",
+        "uri"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Display name/title/label of the standard variable"
+        },
+        "ontology": {
+          "type": "string",
+          "description": "Name of the ontology under which this standard variable is defined"
+        },
+        "uri": {
+          "type": "string",
+          "description": "public URI that defines this standard variable"
+        }
+      }
+    },
+    "Provenance": {
+      "type": "object",
+      "required": [
+        "record_id",
+        "name"
+      ],
+      "properties": {
+        "record_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the entity"
+        }
+      }
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about MINT Data Catalog",
+    "url": "https://github.com/mintproject/MINT-DataCatalog-Public"
+  }
+}

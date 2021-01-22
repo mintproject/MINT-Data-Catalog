@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+
+  flask_app:
+    container_name: dcat_flask_app
+    build: ./api
+    volumes:
+      - ./api:/app
+    ports:
+      - 7000:7000
+    depends_on:
+      - postgresql
+    networks:
+      - default
+
+  postgresql:
+    container_name: dcat_postgresql
+    build: ./postgres
+    volumes:
+      - ./postgres/data/dcat_db:/var/lib/postgresql/data
+      - ./postgres/data/dump:/backup_dump
+    env_file:
+      - ./postgres/.env
+    ports:
+      - 5433:5432
+    networks:
+      - default
