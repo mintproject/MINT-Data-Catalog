@@ -18,11 +18,10 @@ services:
     container_name: dcat_postgresql
     build: ./postgres
     volumes:
-      - ./postgres/data/dcat_db:/var/lib/postgresql/data
-      - ./postgres/data/dump:/backup_dump
+      - /data/storage/data-catalog:/var/lib/postgresql/data
     env_file:
       - ./postgres/.env
     ports:
-      - 5433:5432
+      - 5432:5432
     networks:
       - default
