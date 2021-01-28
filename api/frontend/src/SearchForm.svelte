@@ -21,7 +21,7 @@
 
     async function queryDataCatalog() {
         // const url = "https://api.mint-data-catalog.org/datasets/search_v2";
-        const url = "http://localhost:7000/datasets/search_v2";
+        const url = "/datasets/search_v2";
         const query = {
             "limit": 500
         };
