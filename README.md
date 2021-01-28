@@ -7,7 +7,13 @@
 ### To run Flask and Postgres service
 - To force build docker images: `docker-compose -f docker-compose-dev.yml build --no-cache`
 - Run `docker-compose -f docker-compose-dev.yml up -d` to spin up all containers
-- To rebuild Svelte changes in ./api, run `cd frontend && npm install && npm run-script build && cd ..` 
+
+### Frontend
+- Frontend is written in Svelte an lives under `api/frontend` directory. 
+- The main entry point into the frontend is `public/index.html`
+- CSS and JS are compiled by Svelte from individual `.svelte` files inside `src/` and placed into `public/bundle.[css|js]`
+- To (re)build Svelte, from within `frontend` directory, run `npm install && npm run build`, which will re-generate `public/bundle.[css|js]`
+- To display maps, we use Mapbox, which requires an access token. Svelte expects it to be avaiable under `MAPGL_ACCESS_TOKEN` environment variable when running `npm run build`
 
 ### Verify Postgres service:
 - Run `psql -h localhost -p 5433 -U postgres` to check database content
