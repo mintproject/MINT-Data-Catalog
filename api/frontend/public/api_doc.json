@@ -8,7 +8,7 @@
       "email": "danf@usc.edu"
     }
   },
-  "host": "api.mint-data-catalog.org",
+  "host": "data-catalog.mint.isi.edu",
   "tags": [
     {
       "name": "Datasets"
