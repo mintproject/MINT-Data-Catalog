@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+
+  flask_app:
+    build: 
+      context: ./api
+    ports:
+      - 7000:7000
+    depends_on:
+      - postgres
+    networks:
+      - default
+    env_file:
+      - ./api/dcat_service/.env   
+
+  postgres:
+    build: ./postgres
+    volumes:
+      - /data/storage/data-catalog:/var/lib/postgresql/data
+    env_file:
+      - ./postgres/.env
+    networks:
+      - default

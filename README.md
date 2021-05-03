@@ -5,8 +5,8 @@
 - create dcat_service database connection env file by running `cp ./api/dcat_service/.env.example ./api/dcat_service/.env`
 
 ### To run Flask and Postgres service
-- To force build docker images: `docker-compose -f docker-compose-dev.yml build --no-cache`
-- Run `docker-compose -f docker-compose-dev.yml up -d` to spin up all containers
+- To force build docker images: `docker-compose --build-arg MAPGL_ACCESS_TOKEN=<your_mapgl_token> build --no-cache`
+- Run `docker-compose up -d` to spin up all containers
 
 ### Frontend
 - Frontend is written in Svelte an lives under `api/frontend` directory. 
