@@ -86,7 +86,7 @@
     };
 
     const datasetRequestor = dataCatalogRequest("/datasets/get_dataset_info", query);
-    const datasetVariablesRequestor = dataCatalogRequest("datasets/dataset_variables", query);
+    const datasetVariablesRequestor = dataCatalogRequest("/datasets/dataset_variables", query);
     const datasetResourcesRequestor = dataCatalogRequest("/datasets/dataset_resources", query);
 
     // const datasetRequestor = dataCatalogRequest("https://api.mint-data-catalog.org/datasets/get_dataset_info", query);

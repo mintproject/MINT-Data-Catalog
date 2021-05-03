@@ -5,7 +5,7 @@ from dcat_service.variables import variables_blueprint
 from dcat_service.knowledge_graph import knowledge_graph_blueprint
 from dcat_service.resources import resources_blueprint
 from dcat_service.standard_variables import standard_variables_blueprint
-from dcat_service.handler import _parse_json, find_datasets_handler
+from dcat_service.handler import request_handler, _parse_json, find_datasets_handler
 from dcat_service.misc.exception import UnauthorizedException, BadRequestException, InternalServerException
 import uuid
 import traceback
@@ -14,12 +14,6 @@ from flask_cors import CORS
 import sys
 
 app = Flask(__name__, template_folder='frontend/public', static_folder='frontend/public', static_url_path='/frontend/public')
-app.register_blueprint(provenance_blueprint)
-app.register_blueprint(datasets_blueprint)
-app.register_blueprint(variables_blueprint)
-app.register_blueprint(knowledge_graph_blueprint)
-app.register_blueprint(resources_blueprint)
-app.register_blueprint(standard_variables_blueprint)
 CORS(app)
 
 
@@ -45,23 +39,18 @@ def get_session_token():
     return jsonify({"X-Api-Key": str(session_key)}), 200
 
 
-@app.route('/find_datasets', methods=['POST'])
-def find_datasets():
-    event = request.get_json()
-    event['body'] = _parse_json(event.get('body', ''))
-    try:
-        result = find_datasets_handler(event)
-        return jsonify(result), 200
-    except UnauthorizedException as e:
-        return jsonify(error=str(e)), 403
-    except BadRequestException as e:
-        return jsonify(error=str(e)), 400
-    except InternalServerException as e:
-        traceback.print_exc(file=sys.stdout)
-        return jsonify(error="Internal Error"), 500
-    except Exception as e:
-        traceback.print_exc(file=sys.stdout)
-        return jsonify(error="Internal Error"), 500
+@app.route('/<path:api_endpoint>', methods=['POST'])
+def handle_api_request(api_endpoint):
+    event = {
+        'httpMethod': 'POST',
+        'path': '/' + api_endpoint,
+        'body': request.get_json()
+    }
+    #return event
+    result = request_handler(event, context=None)
+    return result['body'], result['statusCode'], result['headers']
+    #return request_handler(event, context=None)
+    #return request_handler(event, None)
 
 
 if __name__ == "__main__":
