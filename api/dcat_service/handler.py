@@ -145,7 +145,7 @@ def request_handler(event, context):
         elif path == FIND_DATASETS_PATH:
             result = find_datasets_handler(event)
         elif path == FIND_STANDARD_VARIABLES_PATH:
-            result = find_standard_variables_hander(event)
+            result = find_standard_variables_handler(event)
         elif path == JATAWARE_SEARCH_PATH:
             result = jataware_search_handler(event)
         elif path == SEARCH_PATH:
