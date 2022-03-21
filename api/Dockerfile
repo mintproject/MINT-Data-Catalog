@@ -1,5 +1,5 @@
 
-FROM node:11 AS build-env
+FROM node:16 AS build-env
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR /home/node/app
 COPY frontend/package.json .
