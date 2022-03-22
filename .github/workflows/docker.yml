@@ -3,8 +3,7 @@ name: Docker
 on:
   push:
     branches:
-      - deploy
-      - master
+      - '*'
     tags:
       - v*
   pull_request:
@@ -42,6 +41,9 @@ jobs:
           [ "$VERSION" == "master" ] && VERSION=latest
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
+          
           docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
 
+          docker tag $IMAGE_NAME $IMAGE_ID:$GITHUB_SHA
+          docker push $IMAGE_ID:$GITHUB_SHA
