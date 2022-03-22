@@ -14,7 +14,7 @@ from dcat_service.controllers.query_controllers_v2 import search_datasets_v2
 from dcat_service.controllers.registration_controllers import register_provenance, register_datasets, \
     register_standard_variables, register_variables, register_resources
 from dcat_service.controllers.update_controllers import update_dataset_viz_status, update_dataset_viz_config, \
-    update_dataset, update_resource, update_variable, update_standard_variable, sync_datasets_metadata
+    update_dataset, update_resource, update_variable, update_standard_variable, sync_datasets_metadata, sync_dataset_metadata
 from dcat_service.misc.exception import UnauthorizedException, BadRequestException, InternalServerException
 
 
@@ -57,6 +57,7 @@ UPDATE_RESOURCE_PATH = "/resources/update_resource"
 UPDATE_VARIABLE_PATH = "/variables/update_variable"
 UPDATE_STANDARD_VARIABLE_PATH = "/standard_variables/update_standard_variable"
 SYNC_DATASETS_METADATA_PATH = "/datasets/sync_datasets_metadata"
+SYNC_DATASET_METADATA_PATH = "/datasets/sync_dataset_metadata"
 GET_DATASET_INFO_PATH = '/datasets/get_dataset_info'
 GET_RESOURCE_INFO_PATH = '/resources/get_resource_info'
 GET_VARIABLE_INFO_PATH = '/variables/get_variable_info'
@@ -93,6 +94,7 @@ PATHS = frozenset([
     UPDATE_VARIABLE_PATH,
     UPDATE_STANDARD_VARIABLE_PATH,
     SYNC_DATASETS_METADATA_PATH,
+    SYNC_DATASET_METADATA_PATH,
     GET_DATASET_INFO_PATH,
     GET_RESOURCE_INFO_PATH,
     GET_VARIABLE_INFO_PATH,
@@ -180,6 +182,8 @@ def request_handler(event, context):
             result = delete_dataset_handler(event)
         elif path == SYNC_DATASETS_METADATA_PATH:
             result = sync_datasets_metadata_handler(event)
+        elif path == SYNC_DATASET_METADATA_PATH:
+            result = sync_dataset_metadata_handler(event)
         elif path == CACHE_RESOURCES_PATH:
             result = cache_resources_handler(event)
         else:
@@ -346,6 +350,10 @@ def update_standard_variable_handler(event):
 def sync_datasets_metadata_handler(event):
     return sync_datasets_metadata()
 
+def sync_dataset_metadata_handler(event):
+    dsid = event.get('body', {}).get('dataset_id', None)
+    if dsid is not None:
+        return sync_dataset_metadata(dsid)
 
 def get_dataset_info_handler(event):
     query_definition = event.get('body', {})

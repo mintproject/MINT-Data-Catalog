@@ -554,5 +554,174 @@ def _update_standard_variables_list():
             return {"updated_standard_variables_list": False, "error": e}
 
 
+def sync_dataset_metadata(dsid) -> List[Dict]:
+    responses = []
+    responses.append(_update_polygon_spatial_coverage_query_ds(dsid))
+    responses.append(_update_polygon_point_coverage_ds(dsid))
+    responses.append(_update_temporal_coverage_ds(dsid))
+    responses.append(_update_resource_summary_ds(dsid))
+    responses.append(_update_variables_list_ds(dsid))
+    responses.append(_update_standard_variables_list_ds(dsid))
+
+    return responses
+
+
+def _update_polygon_spatial_coverage_query_ds(dsid):
+    with session_scope() as session:
+        update_polygon_spatial_coverage_query = f"""
+            with spatial_coverage as (
+    	            select 
+    	                dataset_id, 
+    	                ST_MakePolygon(ST_ExteriorRing(ST_union(ST_Simplify(spatial_coverage_index.spatial_coverage,0.5)))) as dataset_spatial_coverage 
+    	            from resources
+    	            inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id 
+    	            where st_geometrytype(spatial_coverage_index.spatial_coverage) not like '%Point'
+                    and dataset_id='{dsid}'
+
+    	        --and resources.is_queryable is TRUE
+    	        group by dataset_id
+            )
+            update datasets 
+            SET spatial_coverage = sc.dataset_spatial_coverage
+            from spatial_coverage sc
+            where sc.dataset_id = datasets.id"""
+
+        try:
+            session.execute(update_polygon_spatial_coverage_query)
+            return {"updated_polygon_spatial_coverage": True}
+        except Exception as e:
+            return {"updated_polygon_spatial_coverage": False, "error": e}
+
+
+def _update_polygon_point_coverage_ds(dsid):
+    with session_scope() as session:
+        query = f"""
+                with spatial_coverage as (
+        	        select 
+        	            dataset_id, 
+        	            ST_union(ST_Simplify(st_buffer(spatial_coverage_index.spatial_coverage, 0.1), 0.1)) as dataset_spatial_coverage 
+        	        from resources
+        	        inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id 
+        	        --and resources.is_queryable is TRUE
+        	        where st_geometrytype(spatial_coverage_index.spatial_coverage) like '%Point'
+                    and dataset_id='{dsid}'
+        	        group by dataset_id
+                )
+                update datasets
+                SET spatial_coverage = sc.dataset_spatial_coverage
+                from spatial_coverage sc 
+                where sc.dataset_id = datasets.id"""
+
+        try:
+            session.execute(query)
+            return {"updated_point_spatial_coverage": True}
+        except Exception as e:
+            return {"updated_point_spatial_coverage": False, "error": e}
+
+
+def _update_temporal_coverage_ds(dsid):
+    with session_scope() as session:
+        query = f"""
+                WITH temporal_coverage as (
+        	        select resources.dataset_id, 
+        	            min(temporal_coverage_index.start_time) as start_time, 
+        	            max(temporal_coverage_index.end_time) as end_time 
+        	        from temporal_coverage_index 
+        	        JOIN resources on resources.id = temporal_coverage_index.indexed_id 
+                    where resources.dataset_id='{dsid}'
+        	        --and resources.is_queryable is TRUE
+        	        group by resources.dataset_id
+                )
+                update datasets 
+                SET temporal_coverage_start = tc.start_time,
+                    temporal_coverage_end = tc.end_time,
+                    json_metadata = datasets.json_metadata ||
+        	        jsonb_build_object(
+        		        'temporal_coverage',
+        			    jsonb_build_object(
+        				    'start_time', tc.start_time,
+        				    'end_time', tc.end_time
+        		        )
+        	        )
+                from temporal_coverage tc 
+                where datasets.id = tc.dataset_id"""
+
+        try:
+            session.execute(query)
+            return {"updated_temporal_coverage": True}
+        except Exception as e:
+            return {"updated_temporal_coverage": False, "error": e}
+
+
+def _update_resource_summary_ds(dsid):
+    with session_scope() as session:
+        query = f"""
+                WITH resource_summary as (
+        	        select dataset_id, 
+        	            count(id) as resource_count 
+        	        from resources 
+                    where dataset_id='{dsid}'
+        	        group by dataset_id
+                )
+                update datasets 
+                SET json_metadata = jsonb_build_object(
+        	        'resource_count', rs.resource_count
+                ) || datasets.json_metadata
+                from resource_summary rs
+                where rs.dataset_id = datasets.id"""
+
+        try:
+            session.execute(query)
+            return {"updated_resource_summary": True}
+        except Exception as e:
+            return {"updated_resource_summary": False, "error": e}
+
+
+def _update_variables_list_ds(dsid):
+    with session_scope() as session:
+        query = f"""
+                with variables_summary as (
+        	        select variables.dataset_id as dataset_id, 
+        	            string_agg(variables.name, ',') as variables_list 
+        	        from variables 
+                    where dataset_id='{dsid}'
+        	        group by dataset_id
+                )
+                UPDATE datasets
+                set variables_list = variables_summary.variables_list
+                from variables_summary 
+                where datasets.id = variables_summary.dataset_id"""
+
+        try:
+            session.execute(query)
+            return {"updated_variables_list": True}
+        except Exception as e:
+            return {"updated_variables_list": False, "error": e}
+
+
+def _update_standard_variables_list_ds(dsid):
+    with session_scope() as session:
+        query = f"""
+                with standard_variables_summary as (
+        	        select variables.dataset_id as dataset_id, 
+        	            string_agg(standard_variables.name, ',') as standard_variables_list 
+        	        from variables 
+        	        join variables_standard_variables on variables.id = variables_standard_variables.variable_id
+        	        join standard_variables on standard_variables.id = variables_standard_variables.standard_variable_id
+                    where dataset_id='{dsid}'
+        	        group by dataset_id
+                )
+                UPDATE datasets
+                set standard_variables_list = standard_variables_summary.standard_variables_list
+                from standard_variables_summary 
+                where datasets.id = standard_variables_summary.dataset_id"""
+
+        try:
+            session.execute(query)
+            return {"updated_standard_variables_list": True}
+        except Exception as e:
+            return {"updated_standard_variables_list": False, "error": e}
+
+
 def _get_change_record(old_value, new_value):
     return {"from": old_value, "to": new_value}
