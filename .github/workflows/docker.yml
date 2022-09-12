@@ -10,8 +10,8 @@ on:
 env:
   REPOSITORY_MAIN_BRANCH: "master"
   DOCKER_IMAGE_REPOSITORY: mintproject
-  DOCKER_IMAGE_NAME: data_catalog 
-  DOCKER_DATABASE_IMAGE_NAME: data_catalog_db 
+  DOCKER_IMAGE_NAME: data-catalog 
+  DOCKER_DATABASE_IMAGE_NAME: data-catalog-db 
 
 jobs:
   push:
