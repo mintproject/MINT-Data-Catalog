@@ -1,2 +1,2 @@
 FROM postgis/postgis:10-2.5-alpine
-EXPOSE 5432
+COPY db.sql /docker-entrypoint-initdb.d/
