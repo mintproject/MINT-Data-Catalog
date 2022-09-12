@@ -10,9 +10,8 @@ on:
 env:
   REPOSITORY_MAIN_BRANCH: "master"
   DOCKER_IMAGE_REPOSITORY: mintproject
-  DOCKER_IMAGE_NAME: mint-ui-lit
+  DOCKER_IMAGE_NAME: data_catalog 
   DOCKER_DATABASE_IMAGE_NAME: data_catalog_db 
-  DOCKER_FILE: ".Dockerfile-actions"
 
 jobs:
   push:
@@ -46,7 +45,6 @@ jobs:
           push: true
           context: api
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ steps.branch-name.outputs.current_branch }}, ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}
-          file: ${{ env.DOCKER_FILE}}
           build_args: |
             MAPGL_ACCESS_TOKEN: ${{ secrets.MAPGL_ACCESS_TOKEN }}
 
