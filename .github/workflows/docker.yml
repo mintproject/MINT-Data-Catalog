@@ -55,7 +55,7 @@ jobs:
           push: true
           context: api 
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
-          build_args: |
+          build-args: |
             MAPGL_ACCESS_TOKEN: ${{ secrets.MAPGL_ACCESS_TOKEN }}
 
 
