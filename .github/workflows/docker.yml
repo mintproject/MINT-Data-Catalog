@@ -54,7 +54,7 @@ jobs:
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ steps.branch-name.outputs.current_branch }}, ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}
           file: ${{ env.DOCKER_FILE}}
           build_args:
-            - MAPGL_ACCESS_TOKEN=${{ secrets.MAPGL_ACCESS_TOKEN }}
+            - MAPGL_ACCESS_TOKEN: ${{ secrets.MAPGL_ACCESS_TOKEN }}
 
       - name: API Running on the default branch.
         if: steps.branch-name.outputs.is_default == 'true'
@@ -64,7 +64,7 @@ jobs:
           context: api 
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
           build_args:
-            - MAPGL_ACCESS_TOKEN=${{ secrets.MAPGL_ACCESS_TOKEN }}
+            - MAPGL_ACCESS_TOKEN: ${{ secrets.MAPGL_ACCESS_TOKEN }}
 
 
 
