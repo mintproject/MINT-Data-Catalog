@@ -53,7 +53,7 @@ export default {
 		production && terser(),
 		globals(),
 		builtins(),
-		replace({ __MAPBOXGL_ACCESS_TOKEN__: process.env.MAPGL_ACCESS_TOKEN })
+		replace({ __MAPBOXGL_ACCESS_TOKEN__: "pk.eyJ1IjoibWludC1pc2kiLCJhIjoiY2p2dHRidG00M2pycTQwb2l4eGRhb2Y0eCJ9.ZR9T1wv6IPRxdh2VweXGhQ" })
 	],
 	watch: {
 		clearScreen: false
