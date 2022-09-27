@@ -7,6 +7,8 @@ COPY --chown=node:node frontend/ .
 RUN yarn install
 USER node
 ARG MAPGL_ACCESS_TOKEN
+ENV MAPGL_ACCESS_TOKEN=$MAPGL_ACCESS_TOKEN
+RUN echo ${MAPGL_ACCESS_TOKEN}}
 RUN yarn build
 
 FROM python:3.6-alpine
