@@ -9,7 +9,7 @@ USER node
 ARG MAPGL_ACCESS_TOKEN
 RUN yarn build
 
-FROM python:3.6-alpine
+FROM python:3.7.15-alpine3.15
 RUN apk update && apk add postgresql-dev gcc python3-dev musl-dev g++ nodejs npm
 WORKDIR /app
 COPY . .
