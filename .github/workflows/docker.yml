@@ -1,4 +1,4 @@
-name: docker 
+name: docker
 on:
   push:
     branches:
@@ -10,8 +10,8 @@ on:
 env:
   REPOSITORY_MAIN_BRANCH: "master"
   DOCKER_IMAGE_REPOSITORY: mintproject
-  DOCKER_IMAGE_NAME: data-catalog 
-  DOCKER_DATABASE_IMAGE_NAME: data-catalog-db 
+  DOCKER_IMAGE_NAME: data-catalog
+  DOCKER_DATABASE_IMAGE_NAME: data-catalog-db
 
 jobs:
   build:
@@ -53,7 +53,7 @@ jobs:
         uses: docker/build-push-action@v3.0.0
         with:
           push: true
-          context: api 
+          context: api
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
           build-args: |
             MAPGL_ACCESS_TOKEN: ${{ secrets.MAPGL_ACCESS_TOKEN }}
@@ -72,7 +72,6 @@ jobs:
           push: true
           context: postgres
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_DATABASE_IMAGE_NAME }}:latest
-
   security:
     permissions:
       contents: read
@@ -100,7 +99,7 @@ jobs:
           sarif_file: "trivy-results.sarif"
 
   update:
-    needs: build 
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Create environment variable with the commit id
@@ -125,12 +124,11 @@ jobs:
         if: github.ref == 'refs/heads/master'
         with:
           repository: mintproject/mint
-          path: mint-chart 
+          path: mint-chart
           token: ${{ secrets.MINT_INSTANCES }}
           ref: main
 
-
-      - name: Update MINT ISI master 
+      - name: Update MINT ISI master
         uses: fjogeleit/yaml-update-action@main
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
@@ -140,10 +138,10 @@ jobs:
           message: "Update model catalog api"
           repository: mintproject/mint-instances
           workDir: infrastructure
-          branch: master 
+          branch: master
           token: ${{ secrets.MINT_INSTANCES }}
 
-      - name: Update MINT ISI WIFIRE 
+      - name: Update MINT ISI WIFIRE
         uses: fjogeleit/yaml-update-action@main
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         with:
@@ -153,7 +151,7 @@ jobs:
           message: "Update model catalog api"
           repository: mintproject/mint-instances
           workDir: infrastructure
-          branch: master 
+          branch: master
           token: ${{ secrets.MINT_INSTANCES }}
 
       - name: Update MINT ISI dev
@@ -166,9 +164,8 @@ jobs:
           message: "Update model catalog api"
           repository: mintproject/mint-instances
           workDir: infrastructure
-          branch: master 
+          branch: master
           token: ${{ secrets.MINT_INSTANCES }}
-
 
       - name: Update helm charts
         uses: fjogeleit/yaml-update-action@main
