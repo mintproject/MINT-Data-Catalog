@@ -21,7 +21,7 @@ jobs:
   build:
     strategy:
       matrix:
-        architecture: [amd64, arm64]
+        architecture: [amd64]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
@@ -89,7 +89,6 @@ jobs:
           context: postgres
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_DATABASE_IMAGE_NAME }}:latest
           platforms: linux/${{ matrix.architecture}}
-
 
   security:
     permissions:
