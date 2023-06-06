@@ -52,7 +52,7 @@ jobs:
           push: true
           context: api
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ steps.branch-name.outputs.current_branch }}, ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}
-          build_args: |
+          build-args: |
             MAPGL_ACCESS_TOKEN=${{ secrets.MAPGL_ACCESS_TOKEN }}
 
       - name: API Running on the default branch.
