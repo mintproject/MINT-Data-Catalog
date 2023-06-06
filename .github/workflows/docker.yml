@@ -90,6 +90,7 @@ jobs:
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_DATABASE_IMAGE_NAME }}:latest
           platforms: linux/${{ matrix.architecture}}
 
+
   security:
     permissions:
       contents: read
