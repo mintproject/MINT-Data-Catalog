@@ -1,4 +1,4 @@
-name: docker
+name: docker-arm64
 on:
   push:
     branches:
@@ -18,7 +18,7 @@ env:
   DOCKER_FILE: "Dockerfile"
 
 jobs:
-  build-arm64:
+  build:
     strategy:
       matrix:
         architecture: [arm64]
