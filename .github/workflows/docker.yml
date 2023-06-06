@@ -18,7 +18,7 @@ env:
   DOCKER_FILE: "Dockerfile"
 
 jobs:
-  build:
+  build-amd64:
     strategy:
       matrix:
         architecture: [amd64]
