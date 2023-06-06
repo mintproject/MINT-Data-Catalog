@@ -19,6 +19,9 @@ env:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        architecture: [amd64, arm64]
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
@@ -37,6 +40,9 @@ jobs:
         run: |
           echo "::set-output name=docker_tag::${{ env.DOCKER_TAG }}"
 
+      - name: enable qemu
+        uses: docker/setup-qemu-action@v2
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -52,8 +58,9 @@ jobs:
           push: true
           context: api
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ steps.branch-name.outputs.current_branch }}, ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:${{ env.DOCKER_TAG }}
-          build_args: |
+          build-args: |
             MAPGL_ACCESS_TOKEN=${{ secrets.MAPGL_ACCESS_TOKEN }}
+          platforms: linux/${{ matrix.architecture}}
 
       - name: API Running on the default branch.
         if: steps.branch-name.outputs.is_default == 'true'
@@ -64,6 +71,7 @@ jobs:
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_IMAGE_NAME }}:latest
           build-args: |
             MAPGL_ACCESS_TOKEN: ${{ secrets.MAPGL_ACCESS_TOKEN }}
+          platforms: linux/${{ matrix.architecture}}
 
       - name: Database Build and push Docker image
         uses: docker/build-push-action@v3.0.0
@@ -71,7 +79,7 @@ jobs:
           push: true
           context: postgres
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_DATABASE_IMAGE_NAME }}:${{ steps.branch-name.outputs.current_branch }}, ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_DATABASE_IMAGE_NAME }}:${{ env.DOCKER_TAG }}
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.architecture}}
 
       - name: Database Running on the default branch.
         if: steps.branch-name.outputs.is_default == 'true'
@@ -80,7 +88,8 @@ jobs:
           push: true
           context: postgres
           tags: ${{ env.DOCKER_IMAGE_REPOSITORY }}/${{ env.DOCKER_DATABASE_IMAGE_NAME }}:latest
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{ matrix.architecture}}
+
 
   security:
     permissions:
