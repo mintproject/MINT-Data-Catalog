@@ -4,7 +4,8 @@ from dcat_service.misc.exception import UnauthorizedException, BadRequestExcepti
 import sys
 import traceback
 
-provenance_blueprint = Blueprint('provenance', __name__, url_prefix='/provenance')
+provenance_blueprint = Blueprint(
+    'provenance', __name__, url_prefix='/provenance')
 
 
 # NOTE: need error handler

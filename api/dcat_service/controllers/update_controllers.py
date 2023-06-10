@@ -24,7 +24,8 @@ def update_dataset_viz_status(update_definition: Dict) -> Dict:
         raise BadRequestException({'MissingRequiredParameter': "dataset_id"})
 
     if "viz_config_id" not in update_definition:
-        raise BadRequestException({'MissingRequiredParameter': "viz_config_id"})
+        raise BadRequestException(
+            {'MissingRequiredParameter': "viz_config_id"})
 
     viz_config_id = update_definition["viz_config_id"]
 
@@ -32,15 +33,16 @@ def update_dataset_viz_status(update_definition: Dict) -> Dict:
     try:
         uuid.UUID(str(dataset_id))
     except Exception:
-        raise BadRequestException({'InvalidParameter': f"'dataset_id' must be proper uuid; received {dataset_id}"})
+        raise BadRequestException(
+            {'InvalidParameter': f"'dataset_id' must be proper uuid; received {dataset_id}"})
 
     with session_scope() as session:
 
         dataset = Dataset.find_by_record_id(dataset_id, session=session)
 
         if viz_config_id not in dataset.json_metadata:
-            raise BadRequestException({'InvalidParameter': f"Dataset {dataset_id} does not have viz_config with id {viz_config_id}"})
-
+            raise BadRequestException(
+                {'InvalidParameter': f"Dataset {dataset_id} does not have viz_config with id {viz_config_id}"})
 
         # update dataset metadata
         dataset.json_metadata[viz_config_id]["visualized"] = True
@@ -58,7 +60,8 @@ def update_dataset_viz_config(update_definition: Dict) -> Dict:
         raise BadRequestException({'MissingRequiredParameter': "dataset_id"})
 
     if "viz_config_id" not in update_definition:
-        raise BadRequestException({'MissingRequiredParameter': "viz_config_id"})
+        raise BadRequestException(
+            {'MissingRequiredParameter': "viz_config_id"})
 
     if "$set" not in update_definition:
         raise BadRequestException({'MissingRequiredParameter': "$set"})
@@ -70,7 +73,8 @@ def update_dataset_viz_config(update_definition: Dict) -> Dict:
     try:
         uuid.UUID(str(dataset_id))
     except Exception:
-        raise BadRequestException({'InvalidParameter': f"'dataset_id' must be proper uuid; received {dataset_id}"})
+        raise BadRequestException(
+            {'InvalidParameter': f"'dataset_id' must be proper uuid; received {dataset_id}"})
 
     with session_scope() as session:
 
@@ -111,7 +115,7 @@ def update_dataset(update_definition: Dict) -> Dict:
     if json_metadata is not None and not isinstance(json_metadata, dict):
         raise BadRequestException(
             {'InvalidQueryDefinition': f"'metadata' value must be a JSON object; received {json_metadata}"})
-    
+
     changes = {}
     try:
         with session_scope() as session:
@@ -125,11 +129,12 @@ def update_dataset(update_definition: Dict) -> Dict:
                 # dataset.name = name
                 set_query_part_arr.append(f"name = '{name}'")
                 changes["name"] = _get_change_record(current_name, name)
-                
+
             if description is not None:
                 current_description = dataset.description
                 set_query_part_arr.append(f"description = '{description}'")
-                changes["description"] = _get_change_record(current_description, description)
+                changes["description"] = _get_change_record(
+                    current_description, description)
 
             if json_metadata is not None and isinstance(json_metadata, dict):
                 metadata = dataset.json_metadata
@@ -147,9 +152,11 @@ def update_dataset(update_definition: Dict) -> Dict:
                 for k in keys_to_delete:
                     del metadata[k]
 
-                set_query_part_arr.append(f"json_metadata = $${json.dumps(metadata)}$$::json")
+                set_query_part_arr.append(
+                    f"json_metadata = $${json.dumps(metadata)}$$::json")
 
-                changes["metadata"] = _get_change_record(current_metadata, metadata)
+                changes["metadata"] = _get_change_record(
+                    current_metadata, metadata)
 
             if len(set_query_part_arr) > 0:
                 set_query_part = ', '.join(set_query_part_arr)
@@ -210,14 +217,16 @@ def update_resource(update_definition: Dict) -> Dict:
                 current_resource_type = resource.resource_type
                 set_query_part_arr.append(f"resource_type = '{resource_type}'")
 
-                changes["resource_type"] = _get_change_record(current_resource_type, resource_type)
+                changes["resource_type"] = _get_change_record(
+                    current_resource_type, resource_type)
 
             if data_url is not None:
                 current_data_url = resource.data_url
                 set_query_part_arr.append(f"data_url = '{data_url}'")
 
-                changes["data_url"] = _get_change_record(current_data_url, data_url)
-                
+                changes["data_url"] = _get_change_record(
+                    current_data_url, data_url)
+
             if json_metadata is not None and isinstance(json_metadata, dict):
                 metadata = resource.json_metadata
                 if metadata is None:
@@ -234,13 +243,16 @@ def update_resource(update_definition: Dict) -> Dict:
                 for k in keys_to_delete:
                     del metadata[k]
 
-                set_query_part_arr.append(f"json_metadata = $${json.dumps(metadata)}$$::json")
-                changes["metadata"] = _get_change_record(current_metadata, metadata)
+                set_query_part_arr.append(
+                    f"json_metadata = $${json.dumps(metadata)}$$::json")
+                changes["metadata"] = _get_change_record(
+                    current_metadata, metadata)
 
             if len(set_query_part_arr) > 0:
                 set_query_part = ', '.join(set_query_part_arr)
                 update_query_arr.append(set_query_part)
-                update_query_arr.append(f"WHERE resources.id = '{resource_id}'")
+                update_query_arr.append(
+                    f"WHERE resources.id = '{resource_id}'")
                 update_query = " ".join(update_query_arr)
 
                 print(update_query)
@@ -305,13 +317,16 @@ def update_variable(update_definition: Dict) -> Dict:
                 for k in keys_to_delete:
                     del metadata[k]
 
-                set_query_part_arr.append(f"json_metadata = $${json.dumps(metadata)}$$::json")
-                changes["metadata"] = _get_change_record(current_metadata, metadata)
+                set_query_part_arr.append(
+                    f"json_metadata = $${json.dumps(metadata)}$$::json")
+                changes["metadata"] = _get_change_record(
+                    current_metadata, metadata)
 
             if len(set_query_part_arr) > 0:
                 set_query_part = ', '.join(set_query_part_arr)
                 update_query_arr.append(set_query_part)
-                update_query_arr.append(f"WHERE variables.id = '{variable_id}'")
+                update_query_arr.append(
+                    f"WHERE variables.id = '{variable_id}'")
                 update_query = " ".join(update_query_arr)
 
                 print(update_query)
@@ -330,7 +345,8 @@ def update_standard_variable(update_definition: Dict) -> Dict:
             {'InvalidQueryDefinition': f"Query definition must not be empty; received {update_definition}"})
 
     if "standard_variable_id" not in update_definition:
-        raise BadRequestException({'MissingRequiredParameter': "standard_variable_id"})
+        raise BadRequestException(
+            {'MissingRequiredParameter': "standard_variable_id"})
 
     standard_variable_id = update_definition["standard_variable_id"]
     try:
@@ -349,7 +365,8 @@ def update_standard_variable(update_definition: Dict) -> Dict:
 
     try:
         with session_scope() as session:
-            standard_variable = StandardVariable.find_by_record_id(standard_variable_id, session)
+            standard_variable = StandardVariable.find_by_record_id(
+                standard_variable_id, session)
             update_query_arr = ['UPDATE standard_variables SET']
             set_query_part_arr = []
 
@@ -363,7 +380,8 @@ def update_standard_variable(update_definition: Dict) -> Dict:
                 current_ontology = standard_variable.ontology
                 set_query_part_arr.append(f"ontology = '{ontology}'")
 
-                changes["ontology"] = _get_change_record(current_ontology, ontology)
+                changes["ontology"] = _get_change_record(
+                    current_ontology, ontology)
 
             if uri is not None:
                 current_uri = standard_variable.uri
@@ -373,12 +391,14 @@ def update_standard_variable(update_definition: Dict) -> Dict:
             if description is not None:
                 current_description = standard_variable.description
                 set_query_part_arr.append(f"description = '{description}'")
-                changes["description"] = _get_change_record(current_description, ontology)
+                changes["description"] = _get_change_record(
+                    current_description, ontology)
 
             if len(set_query_part_arr) > 0:
                 set_query_part = ', '.join(set_query_part_arr)
                 update_query_arr.append(set_query_part)
-                update_query_arr.append(f"WHERE standard_variables.id = '{standard_variable_id}'")
+                update_query_arr.append(
+                    f"WHERE standard_variables.id = '{standard_variable_id}'")
                 update_query = " ".join(update_query_arr)
 
                 print(update_query)
@@ -407,17 +427,17 @@ def _update_polygon_spatial_coverage_query():
     with session_scope() as session:
         update_polygon_spatial_coverage_query = """
             with spatial_coverage as (
-    	            select 
-    	                dataset_id, 
-    	                ST_MakePolygon(ST_ExteriorRing(ST_union(ST_Simplify(spatial_coverage_index.spatial_coverage,0.5)))) as dataset_spatial_coverage 
+    	            select
+    	                dataset_id,
+    	                ST_MakePolygon(ST_ExteriorRing(ST_union(ST_Simplify(spatial_coverage_index.spatial_coverage,0.5)))) as dataset_spatial_coverage
     	            from resources
-    	            inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id 
+    	            inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id
     	            where st_geometrytype(spatial_coverage_index.spatial_coverage) not like '%Point'
 
     	        --and resources.is_queryable is TRUE
     	        group by dataset_id
             )
-            update datasets 
+            update datasets
             SET spatial_coverage = sc.dataset_spatial_coverage
             from spatial_coverage sc
             where sc.dataset_id = datasets.id"""
@@ -433,18 +453,18 @@ def _update_polygon_point_coverage():
     with session_scope() as session:
         query = """
                 with spatial_coverage as (
-        	        select 
-        	            dataset_id, 
-        	            ST_union(ST_Simplify(st_buffer(spatial_coverage_index.spatial_coverage, 0.2), 0.2)) as dataset_spatial_coverage 
+        	        select
+        	            dataset_id,
+                        ST_ConvexHull(ST_Collect(spatial_coverage_index.spatial_coverage)) AS dataset_spatial_coverage
         	        from resources
-        	        inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id 
+        	        inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id
         	        --and resources.is_queryable is TRUE
         	        where st_geometrytype(spatial_coverage_index.spatial_coverage) like '%Point'
         	        group by dataset_id
                 )
                 update datasets
                 SET spatial_coverage = sc.dataset_spatial_coverage
-                from spatial_coverage sc 
+                from spatial_coverage sc
                 where sc.dataset_id = datasets.id"""
 
         try:
@@ -458,15 +478,15 @@ def _update_temporal_coverage():
     with session_scope() as session:
         query = """
                 WITH temporal_coverage as (
-        	        select resources.dataset_id, 
-        	            min(temporal_coverage_index.start_time) as start_time, 
-        	            max(temporal_coverage_index.end_time) as end_time 
-        	        from temporal_coverage_index 
-        	        JOIN resources on resources.id = temporal_coverage_index.indexed_id 
+        	        select resources.dataset_id,
+        	            min(temporal_coverage_index.start_time) as start_time,
+        	            max(temporal_coverage_index.end_time) as end_time
+        	        from temporal_coverage_index
+        	        JOIN resources on resources.id = temporal_coverage_index.indexed_id
         	        --and resources.is_queryable is TRUE
         	        group by resources.dataset_id
                 )
-                update datasets 
+                update datasets
                 SET temporal_coverage_start = tc.start_time,
                     temporal_coverage_end = tc.end_time,
                     json_metadata = datasets.json_metadata ||
@@ -477,7 +497,7 @@ def _update_temporal_coverage():
         				    'end_time', tc.end_time
         		        )
         	        )
-                from temporal_coverage tc 
+                from temporal_coverage tc
                 where datasets.id = tc.dataset_id"""
 
         try:
@@ -491,12 +511,12 @@ def _update_resource_summary():
     with session_scope() as session:
         query = """
                 WITH resource_summary as (
-        	        select dataset_id, 
-        	            count(id) as resource_count 
-        	        from resources 
+        	        select dataset_id,
+        	            count(id) as resource_count
+        	        from resources
         	        group by dataset_id
                 )
-                update datasets 
+                update datasets
                 SET json_metadata = jsonb_build_object(
         	        'resource_count', rs.resource_count
                 ) || datasets.json_metadata
@@ -514,14 +534,14 @@ def _update_variables_list():
     with session_scope() as session:
         query = """
                 with variables_summary as (
-        	        select variables.dataset_id as dataset_id, 
-        	            string_agg(variables.name, ',') as variables_list 
-        	        from variables 
+        	        select variables.dataset_id as dataset_id,
+        	            string_agg(variables.name, ',') as variables_list
+        	        from variables
         	        group by dataset_id
                 )
                 UPDATE datasets
                 set variables_list = variables_summary.variables_list
-                from variables_summary 
+                from variables_summary
                 where datasets.id = variables_summary.dataset_id"""
 
         try:
@@ -535,16 +555,16 @@ def _update_standard_variables_list():
     with session_scope() as session:
         query = """
                 with standard_variables_summary as (
-        	        select variables.dataset_id as dataset_id, 
-        	            string_agg(standard_variables.name, ',') as standard_variables_list 
-        	        from variables 
+        	        select variables.dataset_id as dataset_id,
+        	            string_agg(standard_variables.name, ',') as standard_variables_list
+        	        from variables
         	        join variables_standard_variables on variables.id = variables_standard_variables.variable_id
         	        join standard_variables on standard_variables.id = variables_standard_variables.standard_variable_id
         	        group by dataset_id
                 )
                 UPDATE datasets
                 set standard_variables_list = standard_variables_summary.standard_variables_list
-                from standard_variables_summary 
+                from standard_variables_summary
                 where datasets.id = standard_variables_summary.dataset_id"""
 
         try:
@@ -570,18 +590,18 @@ def _update_polygon_spatial_coverage_query_ds(dsid):
     with session_scope() as session:
         update_polygon_spatial_coverage_query = f"""
             with spatial_coverage as (
-    	            select 
-    	                dataset_id, 
-    	                ST_MakePolygon(ST_ExteriorRing(ST_union(ST_Simplify(spatial_coverage_index.spatial_coverage,0.5)))) as dataset_spatial_coverage 
+    	            select
+    	                dataset_id,
+    	                ST_MakePolygon(ST_ExteriorRing(ST_union(ST_Simplify(spatial_coverage_index.spatial_coverage,0.5)))) as dataset_spatial_coverage
     	            from resources
-    	            inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id 
+    	            inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id
     	            where st_geometrytype(spatial_coverage_index.spatial_coverage) not like '%Point'
                     and dataset_id='{dsid}'
 
     	        --and resources.is_queryable is TRUE
     	        group by dataset_id
             )
-            update datasets 
+            update datasets
             SET spatial_coverage = sc.dataset_spatial_coverage
             from spatial_coverage sc
             where sc.dataset_id = datasets.id"""
@@ -597,11 +617,11 @@ def _update_polygon_point_coverage_ds(dsid):
     with session_scope() as session:
         query = f"""
                 with spatial_coverage as (
-        	        select 
-        	            dataset_id, 
-        	            ST_union(ST_Simplify(st_buffer(spatial_coverage_index.spatial_coverage, 0.1), 0.1)) as dataset_spatial_coverage 
+        	        select
+        	            dataset_id,
+        	            ST_union(ST_Simplify(st_buffer(spatial_coverage_index.spatial_coverage, 0.1), 0.1)) as dataset_spatial_coverage
         	        from resources
-        	        inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id 
+        	        inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id
         	        --and resources.is_queryable is TRUE
         	        where st_geometrytype(spatial_coverage_index.spatial_coverage) like '%Point'
                     and dataset_id='{dsid}'
@@ -609,7 +629,7 @@ def _update_polygon_point_coverage_ds(dsid):
                 )
                 update datasets
                 SET spatial_coverage = sc.dataset_spatial_coverage
-                from spatial_coverage sc 
+                from spatial_coverage sc
                 where sc.dataset_id = datasets.id"""
 
         try:
@@ -623,16 +643,16 @@ def _update_temporal_coverage_ds(dsid):
     with session_scope() as session:
         query = f"""
                 WITH temporal_coverage as (
-        	        select resources.dataset_id, 
-        	            min(temporal_coverage_index.start_time) as start_time, 
-        	            max(temporal_coverage_index.end_time) as end_time 
-        	        from temporal_coverage_index 
-        	        JOIN resources on resources.id = temporal_coverage_index.indexed_id 
+        	        select resources.dataset_id,
+        	            min(temporal_coverage_index.start_time) as start_time,
+        	            max(temporal_coverage_index.end_time) as end_time
+        	        from temporal_coverage_index
+        	        JOIN resources on resources.id = temporal_coverage_index.indexed_id
                     where resources.dataset_id='{dsid}'
         	        --and resources.is_queryable is TRUE
         	        group by resources.dataset_id
                 )
-                update datasets 
+                update datasets
                 SET temporal_coverage_start = tc.start_time,
                     temporal_coverage_end = tc.end_time,
                     json_metadata = datasets.json_metadata ||
@@ -643,7 +663,7 @@ def _update_temporal_coverage_ds(dsid):
         				    'end_time', tc.end_time
         		        )
         	        )
-                from temporal_coverage tc 
+                from temporal_coverage tc
                 where datasets.id = tc.dataset_id"""
 
         try:
@@ -657,13 +677,13 @@ def _update_resource_summary_ds(dsid):
     with session_scope() as session:
         query = f"""
                 WITH resource_summary as (
-        	        select dataset_id, 
-        	            count(id) as resource_count 
-        	        from resources 
+        	        select dataset_id,
+        	            count(id) as resource_count
+        	        from resources
                     where dataset_id='{dsid}'
         	        group by dataset_id
                 )
-                update datasets 
+                update datasets
                 SET json_metadata = jsonb_build_object(
         	        'resource_count', rs.resource_count
                 ) || datasets.json_metadata
@@ -681,15 +701,15 @@ def _update_variables_list_ds(dsid):
     with session_scope() as session:
         query = f"""
                 with variables_summary as (
-        	        select variables.dataset_id as dataset_id, 
-        	            string_agg(variables.name, ',') as variables_list 
-        	        from variables 
+        	        select variables.dataset_id as dataset_id,
+        	            string_agg(variables.name, ',') as variables_list
+        	        from variables
                     where dataset_id='{dsid}'
         	        group by dataset_id
                 )
                 UPDATE datasets
                 set variables_list = variables_summary.variables_list
-                from variables_summary 
+                from variables_summary
                 where datasets.id = variables_summary.dataset_id"""
 
         try:
@@ -703,9 +723,9 @@ def _update_standard_variables_list_ds(dsid):
     with session_scope() as session:
         query = f"""
                 with standard_variables_summary as (
-        	        select variables.dataset_id as dataset_id, 
-        	            string_agg(standard_variables.name, ',') as standard_variables_list 
-        	        from variables 
+        	        select variables.dataset_id as dataset_id,
+        	            string_agg(standard_variables.name, ',') as standard_variables_list
+        	        from variables
         	        join variables_standard_variables on variables.id = variables_standard_variables.variable_id
         	        join standard_variables on standard_variables.id = variables_standard_variables.standard_variable_id
                     where dataset_id='{dsid}'
@@ -713,7 +733,7 @@ def _update_standard_variables_list_ds(dsid):
                 )
                 UPDATE datasets
                 set standard_variables_list = standard_variables_summary.standard_variables_list
-                from standard_variables_summary 
+                from standard_variables_summary
                 where datasets.id = standard_variables_summary.dataset_id"""
 
         try:

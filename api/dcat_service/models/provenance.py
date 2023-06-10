@@ -27,7 +27,7 @@ class Provenance:
         }
 
     @staticmethod
-    def find_by_record_id(record_id: str, session: session_scope=None) -> Optional[ProvenanceDB]:
+    def find_by_record_id(record_id: str, session: session_scope = None) -> Optional[ProvenanceDB]:
         record_id = uuid.uuid3(uuid.NAMESPACE_DNS, record_id)
         if session is None:
             with session_scope() as sess:
@@ -75,11 +75,14 @@ class ProvenanceCollectionBuilder:
         self.db_records = []
 
     def instantiate_provenance_arr(self, provenance_definitions: List[dict]):
-        self.provenance_arr = [Provenance.from_json(provenance_definition) for provenance_definition in provenance_definitions]
+        self.provenance_arr = [Provenance.from_json(
+            provenance_definition) for provenance_definition in provenance_definitions]
 
     def validate_schema(self):
-        validator_runner = ValidatorRunner(validators=Provenance.schema_validators())
-        validation_results = validator_runner.run_validations(self.provenance_arr)
+        validator_runner = ValidatorRunner(
+            validators=Provenance.schema_validators())
+        validation_results = validator_runner.run_validations(
+            self.provenance_arr)
 
         validation_results_with_errors = []
         for validation_result in validation_results:
@@ -108,7 +111,8 @@ class ProvenanceCollectionBuilder:
                   }
         )
 
-        provenance_json_records = [provenance.to_json() for provenance in self.provenance_arr]
+        provenance_json_records = [provenance.to_json()
+                                   for provenance in self.provenance_arr]
         self.session.execute(do_update_stmt, provenance_json_records)
 
         return provenance_json_records

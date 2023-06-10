@@ -321,5 +321,3 @@ def delete_dataset_api():
     except Exception as e:
         traceback.print_exc(file=sys.stdout)
         return jsonify(error="Internal Error"), 500
-
-

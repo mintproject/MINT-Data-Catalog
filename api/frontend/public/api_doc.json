@@ -31,24 +31,16 @@
       }
     }
   ],
-  "schemes": [
-    "https"
-  ],
+  "schemes": ["https"],
   "paths": {
     "/datasets/register_datasets": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "Create dataset record(s)",
         "description": "",
         "operationId": "registerDatasets",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -83,18 +75,12 @@
     },
     "/datasets/dataset_standard_variables": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "List all standard_variables for this dataset",
         "description": "",
         "operationId": "datasetStandardVariables",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -163,18 +149,12 @@
     },
     "/datasets/dataset_variables": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "List all variables for this dataset",
         "description": "",
         "operationId": "datasetVariables",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -242,18 +222,12 @@
     },
     "/datasets/dataset_resources": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "List all resources for this dataset",
         "description": "",
         "operationId": "datasetResources",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -326,18 +300,12 @@
     },
     "/datasets/get_dataset_info": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "Detailed information about the dataset",
         "description": "",
         "operationId": "getDatasetInfo",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -397,18 +365,12 @@
     },
     "/datasets/search": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "Full-text search of datasets",
         "description": "",
         "operationId": "datasetsSearch",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -502,18 +464,12 @@
     },
     "/find_datasets": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "Search datasets by name, id, or standard variables",
         "description": "",
         "operationId": "findDatasets",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -627,18 +583,12 @@
     },
     "/datasets/register_variables": {
       "post": {
-        "tags": [
-          "Variables"
-        ],
+        "tags": ["Variables"],
         "summary": "Create variable record(s)",
         "description": "",
         "operationId": "registerVariables",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -673,18 +623,12 @@
     },
     "/datasets/register_resources": {
       "post": {
-        "tags": [
-          "Resources"
-        ],
+        "tags": ["Resources"],
         "summary": "Create resource record(s)",
         "description": "",
         "operationId": "registerResources",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -719,18 +663,12 @@
     },
     "/datasets/update_dataset": {
       "post": {
-        "tags": [
-          "Datasets"
-        ],
+        "tags": ["Datasets"],
         "summary": "Update dataset",
         "description": "",
         "operationId": "updateDataset",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -776,18 +714,12 @@
     },
     "/resources/get_resource_info": {
       "post": {
-        "tags": [
-          "Resources"
-        ],
+        "tags": ["Resources"],
         "summary": "Detailed information about the resource",
         "description": "",
         "operationId": "getResourceInfo",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -856,18 +788,12 @@
     },
     "/resources/update_resource": {
       "post": {
-        "tags": [
-          "Resources"
-        ],
+        "tags": ["Resources"],
         "summary": "Update resource",
         "description": "",
         "operationId": "updateResource",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -926,18 +852,12 @@
     },
     "/variables/get_variable_info": {
       "post": {
-        "tags": [
-          "Variables"
-        ],
+        "tags": ["Variables"],
         "summary": "Detailed information about the variable",
         "description": "",
         "operationId": "getVariableInfo",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -995,18 +915,12 @@
     },
     "/variables/update_variable": {
       "post": {
-        "tags": [
-          "Variables"
-        ],
+        "tags": ["Variables"],
         "summary": "Update variable",
         "description": "",
         "operationId": "updateVariable",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -1030,7 +944,6 @@
                   "type": "object"
                 }
               }
-
             }
           }
         ],
@@ -1049,18 +962,12 @@
     },
     "/knowledge_graph/register_standard_variables": {
       "post": {
-        "tags": [
-          "Standard Variables"
-        ],
+        "tags": ["Standard Variables"],
         "summary": "Create standard_variable record(s)",
         "description": "",
         "operationId": "registerStandardVariables",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -1095,18 +1002,12 @@
     },
     "/standard_variables/update_standard_variable": {
       "post": {
-        "tags": [
-          "StandardVariables"
-        ],
+        "tags": ["StandardVariables"],
         "summary": "Update standard variable",
         "description": "",
         "operationId": "updateStandardVariable",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -1153,18 +1054,12 @@
     },
     "/standard_variables/get_standard_variable_info": {
       "post": {
-        "tags": [
-          "Standard Variables"
-        ],
+        "tags": ["Standard Variables"],
         "summary": "Detailed information about the standard variable",
         "description": "",
         "operationId": "getStandardVariableInfo",
-        "consumes": [
-          "application/json"
-        ],
-        "produces": [
-          "application/json"
-        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [
           {
             "in": "body",
@@ -1226,12 +1121,7 @@
   "definitions": {
     "Dataset": {
       "type": "object",
-      "required": [
-        "record_id",
-        "provenance_id",
-        "name",
-        "description"
-      ],
+      "required": ["record_id", "provenance_id", "name", "description"],
       "properties": {
         "id": {
           "type": "string",
@@ -1310,11 +1200,7 @@
     },
     "Variable": {
       "type": "object",
-      "required": [
-        "record_id",
-        "dataset_id",
-        "name"
-      ],
+      "required": ["record_id", "dataset_id", "name"],
       "properties": {
         "record_id": {
           "type": "string",
@@ -1337,12 +1223,7 @@
     },
     "StandardVariable": {
       "type": "object",
-      "required": [
-        "record_id",
-        "name",
-        "ontology",
-        "uri"
-      ],
+      "required": ["record_id", "name", "ontology", "uri"],
       "properties": {
         "record_id": {
           "type": "string",
@@ -1365,10 +1246,7 @@
     },
     "Provenance": {
       "type": "object",
-      "required": [
-        "record_id",
-        "name"
-      ],
+      "required": ["record_id", "name"],
       "properties": {
         "record_id": {
           "type": "string",

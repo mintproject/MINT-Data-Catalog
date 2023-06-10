@@ -14,9 +14,9 @@ from uuid import uuid4
 
 
 class Resource:
-    def __init__(self, dataset_id: str=None, record_id: str=None, provenance_id: str=None, name: str=None,
-                 data_url: str=None, resource_type: str=None, variable_ids: List[str]=None, json_metadata: dict=None,
-                 layout: dict=None, temporal_coverage: dict=None, spatial_coverage: dict=None):
+    def __init__(self, dataset_id: str = None, record_id: str = None, provenance_id: str = None, name: str = None,
+                 data_url: str = None, resource_type: str = None, variable_ids: List[str] = None, json_metadata: dict = None,
+                 layout: dict = None, temporal_coverage: dict = None, spatial_coverage: dict = None):
 
         self.dataset_id = dataset_id
         self.provenance_id = provenance_id
@@ -29,7 +29,7 @@ class Resource:
         self.layout = layout
         self.temporal_coverage = temporal_coverage
         self.spatial_coverage = spatial_coverage
-        
+
     def to_json(self):
         return {
             "dataset_id": self.dataset_id,
@@ -49,7 +49,7 @@ class Resource:
         return str(self.to_json())
 
     @staticmethod
-    def find_by_record_id(record_id: str, session: session_scope=None) -> Optional[ResourceDB]:
+    def find_by_record_id(record_id: str, session: session_scope = None) -> Optional[ResourceDB]:
         if session is None:
             with session_scope() as sess:
                 return sess.query(ResourceDB).filter(ResourceDB.id == record_id).first()
@@ -58,7 +58,7 @@ class Resource:
             return session.query(ResourceDB).filter(ResourceDB.id == record_id).first()
 
     @staticmethod
-    def find_by_record_ids(record_ids: Iterable[str], session: session_scope=None) -> Iterable[ResourceDB]:
+    def find_by_record_ids(record_ids: Iterable[str], session: session_scope = None) -> Iterable[ResourceDB]:
         if session is None:
             with session_scope() as sess:
                 return sess.query(ResourceDB).filter(ResourceDB.id.in_(record_ids)).all()
@@ -66,35 +66,37 @@ class Resource:
         else:
             return session.query(ResourceDB).filter(ResourceDB.id.in_(record_ids)).all()
 
-
     @staticmethod
     def schema_validators() -> List[Validator]:
         return [
             ValidateNotEmpty(attribute="record_id"),
             ValidateProperUUID(attribute="record_id"),
-            
+
             ValidateNotEmpty(attribute="dataset_id"),
             ValidateProperUUID(attribute="dataset_id"),
-            
+
             ValidateNotEmpty(attribute="provenance_id"),
             ValidateProperUUID(attribute="provenance_id"),
-            
+
             ValidateIsList(attribute="variable_ids"),
             ValidateNotEmpty(attribute="name"),
             ValidateNotEmpty(attribute="resource_type"),
             ValidateNotEmpty(attribute="data_url"),
 
-            ValidateTemporalCoverage(attribute="temporal_coverage", ignore_empty_values=True),
-            ValidateSpatialCoverage(attribute="spatial_coverage", ignore_empty_values=True)
+            ValidateTemporalCoverage(
+                attribute="temporal_coverage", ignore_empty_values=True),
+            ValidateSpatialCoverage(
+                attribute="spatial_coverage", ignore_empty_values=True)
         ]
-    
+
     @staticmethod
     def from_json(resource_definition):
         json_metadata = resource_definition.get('metadata', {})
         layout = resource_definition.get('layout', {})
 
         record_id_candidate = resource_definition.get("record_id")
-        record_id = record_id_candidate if record_id_candidate else str(uuid4())
+        record_id = record_id_candidate if record_id_candidate else str(
+            uuid4())
 
         dataset_id = resource_definition.get("dataset_id")
         provenance_id = resource_definition.get("provenance_id")
@@ -103,8 +105,10 @@ class Resource:
         resource_type = resource_definition.get("resource_type")
         data_url = resource_definition.get("data_url")
 
-        temporal_coverage = resource_definition.get("metadata", {}).get("temporal_coverage")
-        spatial_coverage = resource_definition.get("metadata", {}).get("spatial_coverage")
+        temporal_coverage = resource_definition.get(
+            "metadata", {}).get("temporal_coverage")
+        spatial_coverage = resource_definition.get(
+            "metadata", {}).get("spatial_coverage")
 
         return Resource(record_id=record_id,
                         dataset_id=dataset_id,
@@ -117,8 +121,8 @@ class Resource:
                         layout=layout,
                         temporal_coverage=temporal_coverage,
                         spatial_coverage=spatial_coverage)
-       
-    
+
+
 class ResourceCollectionBuilder:
     def __init__(self, session):
         self.session = session
@@ -131,18 +135,22 @@ class ResourceCollectionBuilder:
             "variable_ids": set([])
         }
         self.resources_variables: List[Dict] = []
-        
+
     def instantiate_resources(self, resource_definitions: List[dict]):
         for resource_definition in resource_definitions:
             resource = Resource.from_json(resource_definition)
 
             self.db_records_references["dataset_ids"].add(resource.dataset_id)
-            self.db_records_references["provenance_ids"].add(resource.provenance_id)
-            self.db_records_references["variable_ids"].update(resource.variable_ids)
-            self.resources = [Resource.from_json(resource_definition) for resource_definition in resource_definitions]
+            self.db_records_references["provenance_ids"].add(
+                resource.provenance_id)
+            self.db_records_references["variable_ids"].update(
+                resource.variable_ids)
+            self.resources = [Resource.from_json(
+                resource_definition) for resource_definition in resource_definitions]
 
     def validate_schema(self):
-        validator_runner = ValidatorRunner(validators=Resource.schema_validators())
+        validator_runner = ValidatorRunner(
+            validators=Resource.schema_validators())
         validation_results = validator_runner.run_validations(self.resources)
 
         validation_results_with_errors = []
@@ -155,9 +163,12 @@ class ResourceCollectionBuilder:
     def build_record_associations(self):
         validation_results_with_errors = []
 
-        datasets = Dataset.find_by_record_ids(self.db_records_references["dataset_ids"], self.session)
-        provenance_arr = Provenance.find_by_record_ids(self.db_records_references["provenance_ids"], self.session)
-        variables = Variable.find_by_record_ids(self.db_records_references["variable_ids"], self.session)
+        datasets = Dataset.find_by_record_ids(
+            self.db_records_references["dataset_ids"], self.session)
+        provenance_arr = Provenance.find_by_record_ids(
+            self.db_records_references["provenance_ids"], self.session)
+        variables = Variable.find_by_record_ids(
+            self.db_records_references["variable_ids"], self.session)
 
         valid_dataset_associations = {}
         for dataset in datasets:
@@ -184,17 +195,21 @@ class ResourceCollectionBuilder:
             resource_record_id = str(resource.record_id)
 
             if resource_record_id in resource_record_ids:
-                validation_result.add_error(f"Duplicate record_id '{resource_record_id}' found in this batch; record_ids must be unique")
+                validation_result.add_error(
+                    f"Duplicate record_id '{resource_record_id}' found in this batch; record_ids must be unique")
             else:
                 resource_record_ids.add(resource_record_id)
 
             if resource.dataset_id not in valid_dataset_ids:
-                validation_result.add_error(f"Invalid value for 'dataset_id': {resource.dataset_id}")
+                validation_result.add_error(
+                    f"Invalid value for 'dataset_id': {resource.dataset_id}")
 
             if resource.provenance_id not in valid_provenance_ids:
-                validation_result.add_error(f"Invalid value for 'provenance_id': {resource.provenance_id}")
-                
-            invalid_variable_ids = set(resource.variable_ids) - valid_variable_ids
+                validation_result.add_error(
+                    f"Invalid value for 'provenance_id': {resource.provenance_id}")
+
+            invalid_variable_ids = set(
+                resource.variable_ids) - valid_variable_ids
             if len(invalid_variable_ids) > 0:
                 validation_result.add_error(
                     f"Invalid value for 'variable_ids': {invalid_variable_ids}")
@@ -236,13 +251,14 @@ class ResourceCollectionBuilder:
                   }
         )
 
-        resources_variables_table = Table("resources_variables", Base.metadata, autoload=True)
+        resources_variables_table = Table(
+            "resources_variables", Base.metadata, autoload=True)
         insert_resources_variables_stmt = postgresql.insert(resources_variables_table).values(
             resource_id=bindparam('resource_id'),
             variable_id=bindparam('variable_id')
         )
 
-        #temporal_coverage_index_table = Table("temporal_coverage_index", Base.metadata, autoload=True)
+        # temporal_coverage_index_table = Table("temporal_coverage_index", Base.metadata, autoload=True)
         insert_temporal_coverage_index_stmt = postgresql.insert(TemporalCoverageIndexDB).values(
             indexed_type=bindparam('indexed_type'),
             indexed_id=bindparam('indexed_id'),
@@ -250,11 +266,11 @@ class ResourceCollectionBuilder:
             end_time=bindparam('end_time')
         )
         do_update_temporal_coverage_index_stmt = insert_temporal_coverage_index_stmt.on_conflict_do_update(
-            index_elements=[TemporalCoverageIndexDB.indexed_type, TemporalCoverageIndexDB.indexed_id],
+            index_elements=[TemporalCoverageIndexDB.indexed_type,
+                            TemporalCoverageIndexDB.indexed_id],
             set_={'start_time': insert_temporal_coverage_index_stmt.excluded.start_time,
                   'end_time': insert_temporal_coverage_index_stmt.excluded.end_time}
         )
-
 
         insert_spatial_coverage_index_stmt = postgresql.insert(SpatialCoverageIndexDB).values(
             indexed_type=bindparam('indexed_type'),
@@ -263,7 +279,8 @@ class ResourceCollectionBuilder:
         )
         do_update_spatial_coverage_index_stmt = insert_spatial_coverage_index_stmt.on_conflict_do_update(
             index_elements=[TemporalCoverageIndexDB.indexed_id],
-            set_={'spatial_coverage': insert_spatial_coverage_index_stmt.excluded.spatial_coverage}
+            set_={
+                'spatial_coverage': insert_spatial_coverage_index_stmt.excluded.spatial_coverage}
         )
         # do_updated_resources_standard_resources_stm = insert_resources_standard_resources_stm.
 
@@ -274,7 +291,7 @@ class ResourceCollectionBuilder:
 
         def is_queryable(provenance_id):
             return True
-            ## Original:
+            # Original:
             # if provenance_id == '6f57d0df-8570-4f7e-93c8-ef71361e6cfe':
             #     return False
             # else:
@@ -316,15 +333,18 @@ class ResourceCollectionBuilder:
 
         def get_query(arr):
             keys = ["indexed_type", "indexed_id", "start_time", "end_time"]
-            query = [f"INSERT INTO temporal_coverage_index ({(', '.join(keys))})"]
+            query = [
+                f"INSERT INTO temporal_coverage_index ({(', '.join(keys))})"]
 
             values_arr = []
             for record in arr:
-                values_arr.append("(" + ", ".join(["'"+record[k]+"'" for k in keys]) + ")")
+                values_arr.append(
+                    "(" + ", ".join(["'"+record[k]+"'" for k in keys]) + ")")
 
             query.append(f"VALUES {', '.join(values_arr)}")
 
-            query.append("ON CONFLICT (indexed_type, indexed_id) DO UPDATE SET start_time = excluded.start_time, end_time = excluded.end_time")
+            query.append(
+                "ON CONFLICT (indexed_type, indexed_id) DO UPDATE SET start_time = excluded.start_time, end_time = excluded.end_time")
             return "\n".join(query)
 
         # Get session's connection to perform bulk inserts, but still within self.session's transaction
@@ -332,13 +352,15 @@ class ResourceCollectionBuilder:
         print(resource_json_records)
         connection.execute(do_update_resources_stmt, resource_json_records)
         if len(resources_variables_json_records) > 0:
-            connection.execute(insert_resources_variables_stmt, resources_variables_json_records)
+            connection.execute(insert_resources_variables_stmt,
+                               resources_variables_json_records)
 
         if len(temporal_coverage_json_records) > 0:
             self.session.execute(get_query(temporal_coverage_json_records))
         # connection.execute(do_update_temporal_coverage_index_stmt, temporal_coverage_json_records)
         if len(spatial_coverage_json_records) > 0:
-            connection.execute(do_update_spatial_coverage_index_stmt, spatial_coverage_json_records)
+            connection.execute(
+                do_update_spatial_coverage_index_stmt, spatial_coverage_json_records)
 
         for record in resource_json_records:
             del record['is_queryable']

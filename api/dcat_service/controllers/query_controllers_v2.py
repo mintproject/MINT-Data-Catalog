@@ -23,10 +23,12 @@ def search_datasets_v2(query_definition: dict) -> list:
     limit = int(query_definition.pop("limit", 500))
     field_names = query_definition.keys()
 
-    allowed_query_words = frozenset(["search_query", "spatial_coverage", "temporal_coverage", "provenance_id"])
+    allowed_query_words = frozenset(
+        ["search_query", "spatial_coverage", "temporal_coverage", "provenance_id"])
 
     if query_definition == {}:
-        raise BadRequestException({'InvalidQueryDefinition': f"Query definition must not be empty"})
+        raise BadRequestException(
+            {'InvalidQueryDefinition': f"Query definition must not be empty"})
 
     if not all([field_name in allowed_query_words for field_name in list(query_definition.keys())]):
         raise BadRequestException(
@@ -36,8 +38,7 @@ def search_datasets_v2(query_definition: dict) -> list:
 
     if search_query is not None and not isinstance(search_query, list):
         raise BadRequestException({'InvalidQueryDefinition':
-                                           f"Invalid value type for 'search_query': {search_query}; must be an array"})
-
+                                   f"Invalid value type for 'search_query': {search_query}; must be an array"})
 
     provenance_id = query_definition.get("provenance_id")
 
@@ -53,14 +54,14 @@ def search_datasets_v2(query_definition: dict) -> list:
     # if spatial_coverage is not None:
     temporal_coverage = query_definition.get("temporal_coverage")
 
-
-        # execute the query
+    # execute the query
     try:
         with session_scope() as session:
 
             # Get Dataset
 
-            datasets_query = _generate_select_datasets_query(provenance_id=provenance_id, search_query=search_query, spatial_coverage=spatial_coverage, temporal_coverage=temporal_coverage, limit=limit)
+            datasets_query = _generate_select_datasets_query(
+                provenance_id=provenance_id, search_query=search_query, spatial_coverage=spatial_coverage, temporal_coverage=temporal_coverage, limit=limit)
             print(datasets_query)
 
             # query = query.limit(limit)
@@ -116,25 +117,31 @@ def _generate_select_datasets_query(provenance_id=None, search_query=[], spatial
 
     if search_query is not None:
         # ["a b", "c"] => "'a b' & 'c'"
-        search_string = " & ".join([f"''{str(keyword)}''" for keyword in search_query])
-        where_query_part.append(f"datasets.tsv @@ to_tsquery('english', '{search_string}')")
-        order_by_query_part.append(f"ts_rank_cd(datasets.tsv, to_tsquery('english', '{search_string}')) DESC")
+        search_string = " & ".join(
+            [f"''{str(keyword)}''" for keyword in search_query])
+        where_query_part.append(
+            f"datasets.tsv @@ to_tsquery('english', '{search_string}')")
+        order_by_query_part.append(
+            f"ts_rank_cd(datasets.tsv, to_tsquery('english', '{search_string}')) DESC")
 
         # datasets that have 'source' field set should be displayed first
-        order_by_query_part.append("(case when datasets.json_metadata -> 'source' IS NOT NULL then 1 else 0 end) DESC")
+        order_by_query_part.append(
+            "(case when datasets.json_metadata -> 'source' IS NOT NULL then 1 else 0 end) DESC")
 
     if spatial_coverage is not None:
-        where_query_part.append(f"ST_Intersects(datasets.spatial_coverage, ST_SetSRID(ST_GeomFromGeoJSON('{ujson.dumps(spatial_coverage)}'), {DatasetDB.LOCATION_SRID}))")
+        where_query_part.append(
+            f"ST_Intersects(datasets.spatial_coverage, ST_SetSRID(ST_GeomFromGeoJSON('{ujson.dumps(spatial_coverage)}'), {DatasetDB.LOCATION_SRID}))")
 
     if temporal_coverage is not None:
         requested_coverage_start_time = temporal_coverage.get('start_time')
         requested_coverage_end_time = temporal_coverage.get('end_time')
 
         if requested_coverage_start_time is not None:
-            where_query_part.append(f"datasets.temporal_coverage_end >= '{requested_coverage_start_time}'")
+            where_query_part.append(
+                f"datasets.temporal_coverage_end >= '{requested_coverage_start_time}'")
         if requested_coverage_end_time is not None:
-            where_query_part.append(f"datasets.temporal_coverage_start <= '{requested_coverage_end_time}'")
-
+            where_query_part.append(
+                f"datasets.temporal_coverage_start <= '{requested_coverage_end_time}'")
 
     query = "SELECT " + ", ".join(select_datasets_query_part) + " "
     query += "FROM datasets "
