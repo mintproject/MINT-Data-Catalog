@@ -5,7 +5,8 @@ from dcat_service.misc.exception import UnauthorizedException, BadRequestExcepti
 import sys
 import traceback
 
-standard_variables_blueprint = Blueprint('standard_variables', __name__, url_prefix='/standard_variables')
+standard_variables_blueprint = Blueprint(
+    'standard_variables', __name__, url_prefix='/standard_variables')
 
 
 @standard_variables_blueprint.route('/test', methods=['GET'])

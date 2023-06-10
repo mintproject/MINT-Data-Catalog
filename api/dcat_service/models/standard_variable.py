@@ -31,7 +31,7 @@ class StandardVariable:
         return str(self.to_json())
 
     @staticmethod
-    def find_by_record_id(record_id: str, session: session_scope=None) -> Optional[StandardVariableDB]:
+    def find_by_record_id(record_id: str, session: session_scope = None) -> Optional[StandardVariableDB]:
         if session is None:
             with session_scope() as sess:
                 return sess.query(StandardVariableDB).filter(StandardVariableDB.id == record_id).first()
@@ -39,7 +39,7 @@ class StandardVariable:
             return session.query(StandardVariableDB).filter(StandardVariableDB.id == record_id).first()
 
     @staticmethod
-    def find_by_record_ids(record_ids: Iterable[str], session: session_scope=None) -> Iterable[StandardVariableDB]:
+    def find_by_record_ids(record_ids: Iterable[str], session: session_scope = None) -> Iterable[StandardVariableDB]:
         if session is None:
             with session_scope() as sess:
                 return sess.query(StandardVariableDB).filter(StandardVariableDB.id.in_(record_ids)).all()
@@ -63,7 +63,8 @@ class StandardVariable:
         ontology = standard_variable_definition.get("ontology")
         uri = standard_variable_definition.get("uri")
         description = standard_variable_definition.get("description", "")
-        record_id = standard_variable_definition.get("record_id", str(uuid.uuid5(uuid.NAMESPACE_URL, str(uri))))
+        record_id = standard_variable_definition.get(
+            "record_id", str(uuid.uuid5(uuid.NAMESPACE_URL, str(uri))))
 
         return StandardVariable(record_id=record_id,
                                 name=name,
@@ -82,11 +83,14 @@ class StandardVariableCollectionBuilder:
         self.db_records_references = {}
 
     def instantiate_variables(self, standard_variable_definitions: List[dict]):
-        self.standard_variables = [StandardVariable.from_json(standard_variable_definition) for standard_variable_definition in standard_variable_definitions]
+        self.standard_variables = [StandardVariable.from_json(
+            standard_variable_definition) for standard_variable_definition in standard_variable_definitions]
 
     def validate_schema(self):
-        validator_runner = ValidatorRunner(validators=StandardVariable.schema_validators())
-        validation_results = validator_runner.run_validations(self.standard_variables)
+        validator_runner = ValidatorRunner(
+            validators=StandardVariable.schema_validators())
+        validation_results = validator_runner.run_validations(
+            self.standard_variables)
 
         validation_results_with_errors = []
         for validation_result in validation_results:
@@ -120,7 +124,8 @@ class StandardVariableCollectionBuilder:
                   }
         )
 
-        standard_variables_json_records = [standard_variable.to_json() for standard_variable in self.standard_variables]
+        standard_variables_json_records = [
+            standard_variable.to_json() for standard_variable in self.standard_variables]
         self.session.execute(do_update_stmt, standard_variables_json_records)
 
         return standard_variables_json_records

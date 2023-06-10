@@ -240,7 +240,8 @@ def register_datasets_handler(event):
 
 @authenticate
 def register_standard_variables_handler(event):
-    standard_variable_definitions = event.get('body', {}).get('standard_variables', [])
+    standard_variable_definitions = event.get(
+        'body', {}).get('standard_variables', [])
 
     return register_standard_variables(standard_variable_definitions)
 
@@ -350,10 +351,12 @@ def update_standard_variable_handler(event):
 def sync_datasets_metadata_handler(event):
     return sync_datasets_metadata()
 
+
 def sync_dataset_metadata_handler(event):
     dsid = event.get('body', {}).get('dataset_id', None)
     if dsid is not None:
         return sync_dataset_metadata(dsid)
+
 
 def get_dataset_info_handler(event):
     query_definition = event.get('body', {})
@@ -512,7 +515,8 @@ def _test_register_standard_variables():
     standard_names = ['sn1', 'sn2', 'sn3', 'sn4', 'sn5', 'sn6']
     standard_variable_definitions = []
     for sn in standard_names:
-        standard_variable_definition = {"name": sn, "ontology": "GSN", "uri": f"www.example.com/{sn}"}
+        standard_variable_definition = {
+            "name": sn, "ontology": "GSN", "uri": f"www.example.com/{sn}"}
         if sn == 'sn3':
             standard_variable_definition['record_id'] = '7529c859-83cb-563f-8cb8-3d6449fe237c'
             standard_variable_definition['ontology'] = 'OtherUPDSDFG'
@@ -642,10 +646,10 @@ def _test_register_resources(dataset_record_id):
                 "type": "Point",
                 "value": {"x": -118.47, "y": 34.00}
             },
-        #     "temporal_coverage": {
-        #         "start_time": "2018-04-01T14:40:31",
-        #         "end_time": "2018-03-01T14:40:30"
-        #     }
+            #     "temporal_coverage": {
+            #         "start_time": "2018-04-01T14:40:31",
+            #         "end_time": "2018-03-01T14:40:30"
+            #     }
         },
         # "metadata": {},
         "layout": {}
@@ -671,14 +675,14 @@ def _test_register_resources_dan():
     }
 
     resource_definitions = [
-            {
-                "dataset_id": "90db5c2f-ab2d-4086-8e07-72edb43545cd",
-                "provenance_id": "7abe6e06-6f12-47b5-8844-3ad3f659e64c",
-                "variable_ids": ["46877064-ba75-4b62-8984-f97bfcc64a04"],
-                "name": "South Sudan Population Density (2015)",
-                "resource_type": "GeoTIFF",
-                "data_url": "https://s3.amazonaws.com/mint-data-catalog-public-datasets/south_sudan/ssudan_pop_density.tif.zip",
-                "metadata": {
+        {
+            "dataset_id": "90db5c2f-ab2d-4086-8e07-72edb43545cd",
+            "provenance_id": "7abe6e06-6f12-47b5-8844-3ad3f659e64c",
+            "variable_ids": ["46877064-ba75-4b62-8984-f97bfcc64a04"],
+            "name": "South Sudan Population Density (2015)",
+            "resource_type": "GeoTIFF",
+            "data_url": "https://s3.amazonaws.com/mint-data-catalog-public-datasets/south_sudan/ssudan_pop_density.tif.zip",
+            "metadata": {
                     "is_zip": "true",
                     "spatial_coverage": {
                         "type": "BoundingBox",
@@ -689,20 +693,20 @@ def _test_register_resources_dan():
                             "ymax": 12.2385040890203332
                         }
                     },
-                    "temporal_coverage": {
+                "temporal_coverage": {
                         "start_time": "2015-01-01T00:00:00",
                         "end_time": "2015-12-31T23:59:59"
                     }
-                }
-            },
-            {
-                "dataset_id": "d33b9035-581c-43bd-bd1c-d7b723231a2b",
-                "provenance_id": "7abe6e06-6f12-47b5-8844-3ad3f659e64c",
-                "variable_ids": ["3a5be2bc-efac-48bb-b70e-411ca4ae258a"],
-                "name": "Road Network",
-                "resource_type": "GeoJSON",
-                "data_url": "https://s3.amazonaws.com/mint-data-catalog-public-datasets/south_sudan/ssudan_roads.geojson.zip",
-                "metadata": {
+            }
+        },
+        {
+            "dataset_id": "d33b9035-581c-43bd-bd1c-d7b723231a2b",
+            "provenance_id": "7abe6e06-6f12-47b5-8844-3ad3f659e64c",
+            "variable_ids": ["3a5be2bc-efac-48bb-b70e-411ca4ae258a"],
+            "name": "Road Network",
+            "resource_type": "GeoJSON",
+            "data_url": "https://s3.amazonaws.com/mint-data-catalog-public-datasets/south_sudan/ssudan_roads.geojson.zip",
+            "metadata": {
                     "is_zip": "true",
                     "spatial_coverage": {
                         "type": "BoundingBox",
@@ -713,13 +717,13 @@ def _test_register_resources_dan():
                             "ymax": 13.1332734000000002
                         }
                     },
-                    "temporal_coverage": {
+                "temporal_coverage": {
                         "start_time": "2017-12-31T00:00:00",
                         "end_time": "2017-12-31T23:59:59"
                     }
-                }
             }
-        ]
+        }
+    ]
 
     event = {
         "path": "/datasets/register_resources",
@@ -793,13 +797,15 @@ def _insert_test():
         sn_name2id[sn['name']] = sn['record_id']
 
     dataset_res = _test_register_datasets()
-    dataset_record_id = ujson.loads(dataset_res['body'])['datasets'][0]['record_id']
+    dataset_record_id = ujson.loads(dataset_res['body'])[
+        'datasets'][0]['record_id']
 
-    variables_res = _test_register_variables(dataset_record_id=dataset_record_id, sn_name2id=sn_name2id)
+    variables_res = _test_register_variables(
+        dataset_record_id=dataset_record_id, sn_name2id=sn_name2id)
 
     pprint.pprint(ujson.dumps(variables_res))
 
-    #resources_res = _test_register_resources(dataset_record_id=dataset_record_id)
+    # resources_res = _test_register_resources(dataset_record_id=dataset_record_id)
 
     print("DONE")
 
@@ -811,24 +817,24 @@ def _fetch_test():
     }
 
     query = {"standard_variable_names__in": ["atmosphere_air_water~vapor__min_of_relative_saturation",
-                                         "land_surface~horizontal_radiation~incoming~shortwave__energy_flux",
-                                         "land_surface_wind__speed",
-                                         "atmosphere_water__time_integral_of_precipitation_leq_volume_flux",
-                                         "air__daily_max_of_temperature", "air__daily_min_of_temperature"],
-         "spatial_coverage__intersects": [-98.9177253733141, 28.928792181820924, -95.16497400496687,
-                                          33.800469405778045],
-         "end_time__gte": "2000-01-01T00:00:00",
-         "start_time__lte": "2018-12-31T00:00:00",
-         "limit": 5000
+                                             "land_surface~horizontal_radiation~incoming~shortwave__energy_flux",
+                                             "land_surface_wind__speed",
+                                             "atmosphere_water__time_integral_of_precipitation_leq_volume_flux",
+                                             "air__daily_max_of_temperature", "air__daily_min_of_temperature"],
+             "spatial_coverage__intersects": [-98.9177253733141, 28.928792181820924, -95.16497400496687,
+                                              33.800469405778045],
+             "end_time__gte": "2000-01-01T00:00:00",
+             "start_time__lte": "2018-12-31T00:00:00",
+             "limit": 5000
+             }
+
+    query = {
+        "spatial_coverage__intersects": {"type": "Polygon", "coordinates": [[[-179.95, -59.95], [-179.95, 89.95], [179.95, 89.95], [179.95, -59.95], [-179.95, -59.95]]]}
     }
 
     query = {
-        "spatial_coverage__intersects": {"type":"Polygon","coordinates":[[[-179.95,-59.95],[-179.95,89.95],[179.95,89.95],[179.95,-59.95],[-179.95,-59.95]]]}
-    }
-
-    query = {
-         "end_time__gte": "2000-01-01T00:00:00",
-         "start_time__lte": "2018-12-31T00:00:00",
+        "end_time__gte": "2000-01-01T00:00:00",
+        "start_time__lte": "2018-12-31T00:00:00",
     }
 
     query = {
@@ -912,8 +918,7 @@ def _test_dataset_standard_variables():
         'body': ujson.dumps(query)
     }
 
-
-    #res = dataset_standard_variables({"headers": {"X-Api-Key": api_key}, "body": ujson.dumps(payload)}, {})
+    # res = dataset_standard_variables({"headers": {"X-Api-Key": api_key}, "body": ujson.dumps(payload)}, {})
     res = request_handler(event=event, context={})
     print(res)
 
@@ -1005,7 +1010,8 @@ def _test_variables_standard_variables():
     api_key = "mint-data-catalog:2bc0308c-ed42-4d05-b1ab-9f0a9f5caac7:30124599-a1d3-48af-a5e1-798446f83662"
 
     # valid uuids
-    variable_ids = ["008d7302-098c-4e80-a1b2-fe72d3012cb1", "b89b96ba-14a7-4f71-a68b-0ca197e1b5d4"]
+    variable_ids = ["008d7302-098c-4e80-a1b2-fe72d3012cb1",
+                    "b89b96ba-14a7-4f71-a68b-0ca197e1b5d4"]
     query = {
         "variable_ids__in": variable_ids
     }
@@ -1213,6 +1219,7 @@ def _test_jataware_search_query():
     print(resp)
     # print(resp['body'])
 
+
 def _test_search_query():
     path = '/datasets/search'
 
@@ -1238,7 +1245,7 @@ def _test_search_v2_query():
     }
 
     body2 = {
-        "spatial_coverage": {"type":"Polygon","coordinates":[[[-179.95,-59.95],[-179.95,89.95],[179.95,89.95],[179.95,-59.95],[-179.95,-59.95]]]}
+        "spatial_coverage": {"type": "Polygon", "coordinates": [[[-179.95, -59.95], [-179.95, 89.95], [179.95, 89.95], [179.95, -59.95], [-179.95, -59.95]]]}
     }
 
     body3 = {
@@ -1325,11 +1332,11 @@ def _test_delete_dataset():
     sn5 = "3c3601a7-1c36-5dfa-8aac-12d07fd93258"
     sn6 = "7370308c-2e57-5a15-ae54-ead6e195835c"
 
+    dataset_definitions = [{"provenance_id": provenance_id,
+                            "record_id": dataset_id, "name": "delete", "description": "delete test"}]
 
-    dataset_definitions = [{"provenance_id": provenance_id, "record_id": dataset_id, "name": "delete", "description": "delete test"}]
-
-
-    headers = {"X-Api-Key": "mint-data-catalog:2bc0308c-ed42-4d05-b1ab-9f0a9f5caac7:30124599-a1d3-48af-a5e1-798446f83662"}
+    headers = {
+        "X-Api-Key": "mint-data-catalog:2bc0308c-ed42-4d05-b1ab-9f0a9f5caac7:30124599-a1d3-48af-a5e1-798446f83662"}
 
     register_datasets_event = {
         "path": "/datasets/register_datasets",
@@ -1418,7 +1425,8 @@ def _test_delete_dataset():
 
 
 def _test_cache_resources():
-    headers = {"X-Api-Key": "mint-data-catalog:2bc0308c-ed42-4d05-b1ab-9f0a9f5caac7:30124599-a1d3-48af-a5e1-798446f83662"}
+    headers = {
+        "X-Api-Key": "mint-data-catalog:2bc0308c-ed42-4d05-b1ab-9f0a9f5caac7:30124599-a1d3-48af-a5e1-798446f83662"}
 
     cache_resources_definition = {"resource_ids": []}
     event = {
@@ -1433,7 +1441,8 @@ def _test_cache_resources():
 
 
 def _test_get_dataset_temporal_coverage():
-    headers = {"X-Api-Key": "mint-data-catalog:2bc0308c-ed42-4d05-b1ab-9f0a9f5caac7:30124599-a1d3-48af-a5e1-798446f83662"}
+    headers = {
+        "X-Api-Key": "mint-data-catalog:2bc0308c-ed42-4d05-b1ab-9f0a9f5caac7:30124599-a1d3-48af-a5e1-798446f83662"}
 
     event = {
         "path": "/datasets/get_dataset_temporal_coverage",
@@ -1451,11 +1460,11 @@ if __name__ == "__main__":
     _insert_test()
     # _fetch_test()
     # _test_find_datasets()
-    #_test_find_standard_variables()
-    #_test_dataset_standard_variables()
+    # _test_find_standard_variables()
+    # _test_dataset_standard_variables()
     # _test_dataset_variables()
     # _test_request_handler()
-    #_test_get_session_token()
+    # _test_get_session_token()
     # _test_register_provenance()
     # _test_register_resources_dan()
     # _test_register_resources("4e8ade31-7729-4891-a462-2dac66158512")

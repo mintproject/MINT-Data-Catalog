@@ -11,8 +11,8 @@ from uuid import uuid4
 
 
 class Variable:
-    def __init__(self, dataset_id: str=None, name: str=None, record_id: str=None,
-                 standard_variable_ids: List[str]=None, json_metadata: dict=None):
+    def __init__(self, dataset_id: str = None, name: str = None, record_id: str = None,
+                 standard_variable_ids: List[str] = None, json_metadata: dict = None):
         self.dataset_id = dataset_id
         self.name = name
         self.record_id = record_id
@@ -48,7 +48,7 @@ class Variable:
         return session.query(VariableDB).filter(VariableDB.id == record_id).first()
 
     @staticmethod
-    def find_by_record_ids(record_ids: Iterable[str], session: session_scope=None) -> Iterable[VariableDB]:
+    def find_by_record_ids(record_ids: Iterable[str], session: session_scope = None) -> Iterable[VariableDB]:
         if session is None:
             with session_scope() as sess:
                 return sess.query(VariableDB).filter(VariableDB.id.in_(record_ids)).all()
@@ -57,7 +57,7 @@ class Variable:
             return session.query(VariableDB).filter(VariableDB.id.in_(record_ids)).all()
 
     @staticmethod
-    def find_by_dataset_id_and_name(dataset_ids_and_names: Iterable[Tuple[str, str]], session: session_scope=None) -> Iterable[VariableDB]:
+    def find_by_dataset_id_and_name(dataset_ids_and_names: Iterable[Tuple[str, str]], session: session_scope = None) -> Iterable[VariableDB]:
         if session is None:
             with session_scope() as sess:
                 return sess.query(VariableDB).filter(tuple_(VariableDB.dataset_id, VariableDB.name).in_(dataset_ids_and_names)).all()
@@ -72,7 +72,8 @@ class Variable:
         record_id = variable_definition.get("record_id", str(uuid4()))
         dataset_id = variable_definition.get("dataset_id")
         name = variable_definition.get("name")
-        standard_variable_ids = variable_definition.get("standard_variable_ids", [])
+        standard_variable_ids = variable_definition.get(
+            "standard_variable_ids", [])
 
         return Variable(dataset_id=dataset_id,
                         name=name,
@@ -98,11 +99,14 @@ class VariableCollectionBuilder:
             variable = Variable.from_json(variable_definition)
 
             self.db_records_references["dataset_ids"].add(variable.dataset_id)
-            self.db_records_references["standard_variable_ids"].update(variable.standard_variable_ids)
-            self.variables = [Variable.from_json(variable_definition) for variable_definition in variable_definitions]
+            self.db_records_references["standard_variable_ids"].update(
+                variable.standard_variable_ids)
+            self.variables = [Variable.from_json(
+                variable_definition) for variable_definition in variable_definitions]
 
     def validate_schema(self):
-        validator_runner = ValidatorRunner(validators=Variable.schema_validators())
+        validator_runner = ValidatorRunner(
+            validators=Variable.schema_validators())
         validation_results = validator_runner.run_validations(self.variables)
 
         validation_results_with_errors = []
@@ -115,8 +119,10 @@ class VariableCollectionBuilder:
     def build_record_associations(self):
         validation_results_with_errors = []
 
-        datasets = Dataset.find_by_record_ids(self.db_records_references["dataset_ids"], self.session)
-        standard_variables = StandardVariable.find_by_record_ids(self.db_records_references["standard_variable_ids"], self.session)
+        datasets = Dataset.find_by_record_ids(
+            self.db_records_references["dataset_ids"], self.session)
+        standard_variables = StandardVariable.find_by_record_ids(
+            self.db_records_references["standard_variable_ids"], self.session)
 
         valid_dataset_associations = {}
         for dataset in datasets:
@@ -126,9 +132,11 @@ class VariableCollectionBuilder:
 
         valid_standard_variables_associations = {}
         for standard_variable in standard_variables:
-            valid_standard_variables_associations[str(standard_variable.id)] = standard_variable
+            valid_standard_variables_associations[str(
+                standard_variable.id)] = standard_variable
 
-        valid_standard_variable_ids = set(valid_standard_variables_associations.keys())
+        valid_standard_variable_ids = set(
+            valid_standard_variables_associations.keys())
 
         # make sure that there are no duplicate dataset_id/name in the payload
         dataset_id_name_counts = {}
@@ -142,33 +150,41 @@ class VariableCollectionBuilder:
         for variable in self.variables:
             validation_result = ValidationResult(record=variable.to_json())
             if variable.dataset_id not in valid_dataset_ids:
-                validation_result.add_error(f"Invalid value for 'dataset_id': {variable.dataset_id}")
+                validation_result.add_error(
+                    f"Invalid value for 'dataset_id': {variable.dataset_id}")
 
-            invalid_standard_variable_ids = set(variable.standard_variable_ids) - valid_standard_variable_ids
+            invalid_standard_variable_ids = set(
+                variable.standard_variable_ids) - valid_standard_variable_ids
             if len(invalid_standard_variable_ids) > 0:
-                validation_result.add_error(f"Invalid value for 'standard_variable_ids': {invalid_standard_variable_ids}")
+                validation_result.add_error(
+                    f"Invalid value for 'standard_variable_ids': {invalid_standard_variable_ids}")
 
             dataset_id = str(variable.dataset_id)
             name = str(variable.name)
             key_count = dataset_id_name_counts[(dataset_id, name)]
             if key_count > 1:
-                validation_result.add_error(f"Duplicate value for (dataset_id, name): ({dataset_id}), ({name})")
+                validation_result.add_error(
+                    f"Duplicate value for (dataset_id, name): ({dataset_id}), ({name})")
 
             if not validation_result.is_valid():
                 validation_results_with_errors.append(validation_result)
 
         # Validate uniqueness of dataset_id/name
         if len(validation_results_with_errors) == 0:
-            prelim_dataset_id_and_name_to_var = {(str(v.dataset_id), str(v.name)): v for v in self.variables}
-            existing_variables = Variable.find_by_dataset_id_and_name(list(prelim_dataset_id_and_name_to_var.keys()), self.session)
+            prelim_dataset_id_and_name_to_var = {
+                (str(v.dataset_id), str(v.name)): v for v in self.variables}
+            existing_variables = Variable.find_by_dataset_id_and_name(
+                list(prelim_dataset_id_and_name_to_var.keys()), self.session)
             for existing_variable in existing_variables:
                 record_id = str(existing_variable.id)
                 dataset_id = str(existing_variable.dataset_id)
                 name = existing_variable.name
 
-                variable = prelim_dataset_id_and_name_to_var[(dataset_id, name)]
+                variable = prelim_dataset_id_and_name_to_var[(
+                    dataset_id, name)]
                 if variable.record_id != record_id:
-                    validation_result = ValidationResult(record=variable.to_json())
+                    validation_result = ValidationResult(
+                        record=variable.to_json())
 
                     msg = f"Record already exists for variable with dataset_id '{dataset_id}' and name '{name}': '{record_id}'"
                     validation_result.add_error(msg)
@@ -200,7 +216,8 @@ class VariableCollectionBuilder:
                   }
         )
 
-        variables_standard_variables_table = Table("variables_standard_variables", Base.metadata, autoload=True)
+        variables_standard_variables_table = Table(
+            "variables_standard_variables", Base.metadata, autoload=True)
         insert_variables_standard_variables_stm = postgresql.insert(variables_standard_variables_table).values(
             variable_id=bindparam('variable_id'),
             standard_variable_id=bindparam('standard_variable_id')
@@ -225,13 +242,7 @@ class VariableCollectionBuilder:
                 })
 
         self.session.execute(do_update_variables_stmt, variable_json_records)
-        self.session.execute(insert_variables_standard_variables_stm, variables_standard_variables_json_records)
+        self.session.execute(insert_variables_standard_variables_stm,
+                             variables_standard_variables_json_records)
 
         return variable_json_records
-
-
-
-
-
-
-

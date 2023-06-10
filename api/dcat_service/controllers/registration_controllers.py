@@ -20,14 +20,16 @@ from dcat_service import session_scope
 def register_provenance(provenance_definition: Dict) -> Dict:
 
     if len(provenance_definition) == 0:
-        raise BadRequestException({'Missing parameter or its value is empty': "provenance"})
+        raise BadRequestException(
+            {'Missing parameter or its value is empty': "provenance"})
 
     with session_scope() as session:
         builder = ProvenanceCollectionBuilder(session)
         builder.instantiate_provenance_arr([provenance_definition])
         builder.validate_schema()
         if len(builder.schema_validation_errors) > 0:
-            raise BadRequestException({"ProvenanceSchemaValidationError": builder.schema_validation_errors})
+            raise BadRequestException(
+                {"ProvenanceSchemaValidationError": builder.schema_validation_errors})
         builder.build_record_associations()
         provenance_arr = builder.persist()
 
@@ -37,7 +39,8 @@ def register_provenance(provenance_definition: Dict) -> Dict:
 def register_standard_variables(standard_variable_definitions: list) -> dict:
 
     if len(standard_variable_definitions) == 0:
-        raise BadRequestException({'Missing parameter or its value is empty': "standard_variables"})
+        raise BadRequestException(
+            {'Missing parameter or its value is empty': "standard_variables"})
     elif len(standard_variable_definitions) > 500:
         raise BadRequestException({
             'NumRecordsExceedsThresholdError':
@@ -49,7 +52,8 @@ def register_standard_variables(standard_variable_definitions: list) -> dict:
         builder.instantiate_variables(standard_variable_definitions)
         builder.validate_schema()
         if len(builder.schema_validation_errors) > 0:
-            raise BadRequestException({"StandardVariableSchemaValidationError": builder.schema_validation_errors})
+            raise BadRequestException(
+                {"StandardVariableSchemaValidationError": builder.schema_validation_errors})
         builder.build_record_associations()
         standard_variables = builder.persist()
 
@@ -58,7 +62,8 @@ def register_standard_variables(standard_variable_definitions: list) -> dict:
 
 def register_datasets(dataset_definitions: list) -> dict:
     if len(dataset_definitions) == 0:
-        raise BadRequestException('Missing parameter or its value is empty: "datasets"')
+        raise BadRequestException(
+            'Missing parameter or its value is empty: "datasets"')
     elif len(dataset_definitions) > 500:
         raise BadRequestException({
             "NumRecordsExceedsThresholdError":
@@ -70,11 +75,13 @@ def register_datasets(dataset_definitions: list) -> dict:
         builder.instantiate_variables(dataset_definitions)
         builder.validate_schema()
         if len(builder.schema_validation_errors) > 0:
-            raise BadRequestException({"DatasetSchemaValidationError": builder.schema_validation_errors})
+            raise BadRequestException(
+                {"DatasetSchemaValidationError": builder.schema_validation_errors})
 
         builder.build_record_associations()
         if len(builder.data_validation_errors) > 0:
-            raise BadRequestException({"DatasetDataValidationError": builder.data_validation_errors})
+            raise BadRequestException(
+                {"DatasetDataValidationError": builder.data_validation_errors})
 
         datasets = builder.persist()
 
@@ -108,7 +115,8 @@ def register_datasets(dataset_definitions: list) -> dict:
 
 def register_variables(variable_definitions: list) -> dict:
     if len(variable_definitions) == 0:
-        raise BadRequestException({"Missing parameter or its value is empty": 'variables'})
+        raise BadRequestException(
+            {"Missing parameter or its value is empty": 'variables'})
     elif len(variable_definitions) > 500:
         raise BadRequestException({
             "NumRecordsExceedsThresholdError":
@@ -120,11 +128,13 @@ def register_variables(variable_definitions: list) -> dict:
         builder.instantiate_variables(variable_definitions)
         builder.validate_schema()
         if len(builder.schema_validation_errors) > 0:
-            raise BadRequestException({"VariableSchemaValidationError": builder.schema_validation_errors})
+            raise BadRequestException(
+                {"VariableSchemaValidationError": builder.schema_validation_errors})
 
         builder.build_record_associations()
         if len(builder.data_validation_errors) > 0:
-            raise BadRequestException({"DataValidationError": builder.data_validation_errors})
+            raise BadRequestException(
+                {"DataValidationError": builder.data_validation_errors})
 
         variables = builder.persist()
 
@@ -133,7 +143,8 @@ def register_variables(variable_definitions: list) -> dict:
 
 def register_resources(resource_definitions: list) -> dict:
     if len(resource_definitions) == 0:
-        raise BadRequestException({"Missing parameter or its value is empty": 'resources'})
+        raise BadRequestException(
+            {"Missing parameter or its value is empty": 'resources'})
     elif len(resource_definitions) > 500:
         raise BadRequestException({
             "NumRecordsExceedsThresholdError":
@@ -145,11 +156,13 @@ def register_resources(resource_definitions: list) -> dict:
         builder.instantiate_resources(resource_definitions)
         builder.validate_schema()
         if len(builder.schema_validation_errors) > 0:
-            raise BadRequestException({"VariableSchemaValidationError": builder.schema_validation_errors})
+            raise BadRequestException(
+                {"VariableSchemaValidationError": builder.schema_validation_errors})
 
         builder.build_record_associations()
         if len(builder.data_validation_errors) > 0:
-            raise BadRequestException({"DataValidationError": builder.data_validation_errors})
+            raise BadRequestException(
+                {"DataValidationError": builder.data_validation_errors})
 
         resources = builder.persist()
 

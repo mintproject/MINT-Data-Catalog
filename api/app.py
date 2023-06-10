@@ -13,7 +13,8 @@ import traceback
 from flask_cors import CORS
 import sys
 
-app = Flask(__name__, template_folder='frontend/public', static_folder='frontend/public', static_url_path='/frontend/public')
+app = Flask(__name__, template_folder='frontend/public',
+            static_folder='frontend/public', static_url_path='/frontend/public')
 CORS(app)
 
 
@@ -46,11 +47,11 @@ def handle_api_request(api_endpoint):
         'path': '/' + api_endpoint,
         'body': request.get_json()
     }
-    #return event
+    # return event
     result = request_handler(event, context=None)
     return result['body'], result['statusCode'], result['headers']
-    #return request_handler(event, context=None)
-    #return request_handler(event, None)
+    # return request_handler(event, context=None)
+    # return request_handler(event, None)
 
 
 if __name__ == "__main__":

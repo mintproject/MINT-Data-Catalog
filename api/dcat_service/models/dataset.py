@@ -51,7 +51,7 @@ class Dataset:
     #     return {}
 
     @staticmethod
-    def find_by_record_id(record_id: str, session: session_scope=None) -> Optional[DatasetDB]:
+    def find_by_record_id(record_id: str, session: session_scope = None) -> Optional[DatasetDB]:
         attributes = [DatasetDB.id, DatasetDB.provenance_id, DatasetDB.name, DatasetDB.description,
                       DatasetDB.json_metadata, DatasetDB.created_at, func.ST_AsGeoJSON(DatasetDB.spatial_coverage).label('spatial_coverage_geojson')]
         if session is None:
@@ -62,7 +62,7 @@ class Dataset:
             return session.query(*attributes).filter(DatasetDB.id == record_id).first()
 
     @staticmethod
-    def find_by_record_ids(record_ids: Iterable[str], session: session_scope=None) -> Iterable[DatasetDB]:
+    def find_by_record_ids(record_ids: Iterable[str], session: session_scope = None) -> Iterable[DatasetDB]:
         if session is None:
             with session_scope() as sess:
                 return sess.query(DatasetDB).filter(DatasetDB.id.in_(record_ids)).all()
@@ -117,15 +117,17 @@ class DatasetCollectionBuilder:
         self.schema_validation_errors: List[ValidationResult] = []
         self.data_validation_errors: List[ValidationResult] = []
         self.db_records_references = {"provenance_record_ids": set([])}
-        
+
     def instantiate_variables(self, dataset_definitions: List[dict]):
         for dataset_definition in dataset_definitions:
             dataset = Dataset.from_json(dataset_definition)
-            self.db_records_references["provenance_record_ids"].add(dataset.provenance_id)
+            self.db_records_references["provenance_record_ids"].add(
+                dataset.provenance_id)
             self.datasets.append(dataset)
 
     def validate_schema(self):
-        validator_runner = ValidatorRunner(validators=Dataset.schema_validators_for_create())
+        validator_runner = ValidatorRunner(
+            validators=Dataset.schema_validators_for_create())
         validation_results = validator_runner.run_validations(self.datasets)
 
         validation_results_with_errors = []
@@ -134,9 +136,10 @@ class DatasetCollectionBuilder:
                 validation_results_with_errors.append(validation_result)
 
         self.schema_validation_errors = validation_results_with_errors
-        
+
     def build_record_associations(self):
-        provenance_arr = Provenance.find_by_record_ids(self.db_records_references["provenance_record_ids"], self.session)
+        provenance_arr = Provenance.find_by_record_ids(
+            self.db_records_references["provenance_record_ids"], self.session)
         valid_provenance_associations = {}
         for provenance in provenance_arr:
             valid_provenance_associations[str(provenance.id)] = provenance
@@ -146,7 +149,8 @@ class DatasetCollectionBuilder:
         for dataset in self.datasets:
             if dataset.provenance_id not in valid_provenance_record_ids:
                 validation_result = ValidationResult(record=dataset.to_json())
-                validation_result.add_error([f"Invalid value for 'provenance_id': {dataset.provenance_id}"])
+                validation_result.add_error(
+                    [f"Invalid value for 'provenance_id': {dataset.provenance_id}"])
                 validation_results_with_errors.append(validation_result)
 
         self.data_validation_errors = validation_results_with_errors
@@ -172,7 +176,8 @@ class DatasetCollectionBuilder:
                   }
         )
 
-        standard_variables_json_records = [dataset.to_json() for dataset in self.datasets]
+        standard_variables_json_records = [
+            dataset.to_json() for dataset in self.datasets]
         self.session.execute(do_update_stmt, standard_variables_json_records)
 
         return standard_variables_json_records
@@ -190,11 +195,13 @@ class DatasetCollectionUpdater:
     def instantiate_variables(self, dataset_definitions: List[dict]):
         for dataset_definition in dataset_definitions:
             dataset = Dataset.from_json(dataset_definition)
-            self.db_records_references["provenance_record_ids"].add(dataset.provenance_id)
+            self.db_records_references["provenance_record_ids"].add(
+                dataset.provenance_id)
             self.datasets.append(dataset)
 
     def validate_schema(self):
-        validator_runner = ValidatorRunner(validators=Dataset.schema_validators_for_create())
+        validator_runner = ValidatorRunner(
+            validators=Dataset.schema_validators_for_create())
         validation_results = validator_runner.run_validations(self.datasets)
 
         validation_results_with_errors = []
@@ -216,7 +223,8 @@ class DatasetCollectionUpdater:
         for dataset in self.datasets:
             if dataset.provenance_id not in valid_provenance_record_ids:
                 validation_result = ValidationResult(record=dataset.to_json())
-                validation_result.add_error([f"Invalid value for 'provenance_id': {dataset.provenance_id}"])
+                validation_result.add_error(
+                    [f"Invalid value for 'provenance_id': {dataset.provenance_id}"])
                 validation_results_with_errors.append(validation_result)
 
         self.data_validation_errors = validation_results_with_errors
@@ -242,7 +250,8 @@ class DatasetCollectionUpdater:
                   }
         )
 
-        standard_variables_json_records = [dataset.to_json() for dataset in self.datasets]
+        standard_variables_json_records = [
+            dataset.to_json() for dataset in self.datasets]
         self.session.execute(do_update_stmt, standard_variables_json_records)
 
         return standard_variables_json_records

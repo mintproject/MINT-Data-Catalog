@@ -5,7 +5,8 @@ from dcat_service.misc.exception import UnauthorizedException, BadRequestExcepti
 import sys
 import traceback
 
-knowledge_graph_blueprint = Blueprint('knowledge_graph', __name__, url_prefix='/knowledge_graph')
+knowledge_graph_blueprint = Blueprint(
+    'knowledge_graph', __name__, url_prefix='/knowledge_graph')
 
 
 @knowledge_graph_blueprint.route('/test', methods=['GET'])
