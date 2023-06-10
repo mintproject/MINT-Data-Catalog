@@ -455,7 +455,7 @@ def _update_polygon_point_coverage():
                 with spatial_coverage as (
         	        select
         	            dataset_id,
-        	            ST_union(ST_Simplify(st_buffer(spatial_coverage_index.spatial_coverage, 0.2), 0.2)) as dataset_spatial_coverage
+                        ST_ConvexHull(ST_Collect(spatial_coverage_index.spatial_coverage)) AS dataset_spatial_coverage
         	        from resources
         	        inner join spatial_coverage_index on resources.id = spatial_coverage_index.indexed_id
         	        --and resources.is_queryable is TRUE
