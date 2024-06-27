@@ -1,4 +1,4 @@
-## MINT-Data-Catalog
+## MINT Data Catalog
 
 ### Set up .env files
 - create postgres env file by running `cp ./postgres/.env.example ./postgres/.env`
